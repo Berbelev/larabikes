@@ -18,7 +18,7 @@
 
 
 
-        
+
         <!--PARTE SUPERIOR-->
         @section('navegacion')
         <nav>
@@ -45,20 +45,21 @@
 
 
 
-        
+
 
 
         <!--PARTE CENTRAL-->
-        <h1 class="my-2">Gestor de motos Larabikes</h1>
+        <h1 class="my-2">Gestor de motos Larabikes</h1><br>
 
         <main>
+
             <!--yield mostrará el titulo especificado en la vista hija-->
-            <h2>@yield('titulo')</h2>
+            <h2 class="text-muted">@yield('titulo')</h2>
 
 
             <!--inclusión condicionada de sub-vistas -->
             @includeWhen(Session::has('success'), 'layouts.success')
-            @includeWhen($errors->any(), 'layouts.errors')
+            @includeWhen($errors->any(), 'layouts.error')
 
 
 
@@ -67,7 +68,7 @@
 
 
 
-            <div class="btn-group" role="group" arial-label="links">
+            <div class="btn-group" role="group" arial-label="Links">
                 <!--define y muestra la sección enlaces -->
                 @section('enlaces')
                     <a href="{{ url('/') }}" class="btn btn-primary m-2">Inicio</a>

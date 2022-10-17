@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\BikeRequest;
 use Illuminate\Http\Request;
 use App\Models\Bike;
 
@@ -11,14 +12,14 @@ class BikeController extends Controller{
     /*
     |===========================================================
     |   LISTA DE MOTOS
-    |   1. index() 
+    |   1. index()
     |===========================================================
      */
     /**
      * _________________________________________________________
-     * 
+     *
      * index()
-     * --------------------------------------------------------- 
+     * ---------------------------------------------------------
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
@@ -53,90 +54,192 @@ class BikeController extends Controller{
      */
     /**
      * _________________________________________________________
-     * 
-     * create()
-     * ---------------------------------------------------------      
+     *
+     * 2.1_ create()
+     * ---------------------------------------------------------
      * Show the form for creating a new resource.
      *
      * @return \Illuminate\Http\Response
      */
     public function create(){
         // Carga la vista con el formulario
-        
+        return view('bikes.create');
+
     }
 
     /**
     * _________________________________________________________
-     * 
-     * store()
+     *
+     * 2.2_ store()
      * ---------------------------------------------------------
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request){
-        //
+    public function store(BikeRequest $request){
+
+        // Recuperar datos del formulario excepto la imagen
+        $datos = $request->only(['marca','modelo', 'precio',
+                                 'kms', 'matriculada', 'matricula',
+                                  'color']);
+
+        // creación y guardado de la nueva moto
+        $bike = Bike::create($datos);
+
+
+        // redirecciona a los detalles de la moto creada
+        return redirect()
+            ->route('bikes.show', $bike->id)
+            ->with('success', "Moto $bike->marca $bike->modelo añadida con éxito.");
+
     }
 
+    /*
+    |===========================================================
+    |   DETALLES DE LA MOTO
+    |   3. show()
+    |===========================================================
+     */
     /**
      * _________________________________________________________
-     * 
-     * show(int $id)
+     *
+     * 3. show(int $id)
      * ---------------------------------------------------------
      * Display the specified resource.
      *
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
-    {
-        //
+    public function show($id) {
+        //recupera la moto con el id deseado
+        // si no lo encuentra generará un error 404
+        $bike = Bike::findOrFail($id);
+
+        //carga la vista correspondiente
+        // y le pasa la moto
+        return view('bikes.show', ['bike'=>$bike]);
     }
 
+    /*
+    |===========================================================
+    |   DETALLES DE LA MOTO
+    |   4.1_ edit() y 4.2_update()
+    |===========================================================
+     */
     /**
      * _________________________________________________________
-     * 
-     * edit()
+     *
+     * 4.1_ edit()
      * ---------------------------------------------------------
      * Show the form for editing the specified resource.
      *
-     * @param  int  $id
+     * @param  Bike  $bike
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
-    {
-        //
+    public function edit(Bike $bike)    {
+
+        // recupera la moto con el id deseado
+        // si no la encuentra generará un error  404
+
+        // modificación 0.3.0
+        // usamos implicit binding, por tanto no hace falta recuperar el objeto de tipo moto
+        // porque ya lo recupera elocuent
+        // $bike = Bike::findOrFail($id);
+
+        // carga la vista con el formulario para modificar la moto
+        return view('bikes.update', ['bike'=>$bike]);
     }
 
     /**
      * _________________________________________________________
-     * 
-     * update()
-     * --------------------------------------------------------- 
+     *
+     * 4.2_ update()
+     * ---------------------------------------------------------
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
-    {
-        //
+    public function update(Request $request, Bike $bike)   {
+
+                // toma los datos del formulario
+                $datos =$request->only('marca', 'modelo', 'kms', 'precio');
+
+                // estos datos no se pueden tomar directamente
+                $datos['matriculada'] = $request->has('matriculada')?1:0;
+                $datos['matricula']= $request->has('matriculada')? $request->input('matricula'): NULL;
+                $datos['color'] = $request->input('color') ?? NULL;
+
+
+                // actualiza los cambios de moto en la base de datos
+                $bike->update($request->all());
+
+
+                // TODO: encola las cookies
+                // Cookie::queue('lastUpdateID', $bike->id,0);
+                // Cookie::queue('lastUpdateDate', now(),0);
+
+                // carga la misma vista [return back()] y muestra mensaje de exito
+                // muestra al user un mensaje de los cambios realizados con variable de session flaseada
+                // anexar cookies con el último ID
+                return back()
+                    ->with('success', "Moto $bike->marca $bike->modelo actualizada con éxito")
+                   // ->cookie('lastUpdateID', $bike->id,0)
+                   ;
+
+                /*FIXME: para que no nos salga un saltamontes o cucharacha...
+                |        evitar utilizar checkbox con matriculada en la vista
+                |        al desmarcarlo, Eloquente no realiza la modificación en la BDD
+                |
+                |       SOLUCIÓN: usar desplegables o botones de radio para matriculada
+                |                 en la vista 'bikes.update'
+                */
     }
 
+
+
+    /*
+    |===========================================================
+    |   ELIMINAR MOTO
+    |   5.1_ delete() y 5.2_destroy()
+    |===========================================================
+     */
     /**
      * _________________________________________________________
-     * 
-     * destroy()
-     * ---------------------------------------------------------
-     * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * 5.1_ delete()
+     * ---------------------------------------------------------
+     * Muestra el formulario de confirmación
+     *
+     * @param  Bike  $bike
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
-    {
-        //
+    public function delete(Bike $bike)    {
+        //muestra formulario con mensaje de confirmaicón para el borrado de la moto
+        // y recupera la moto para mostrar en la vista de blade
+        return view('bikes.delete',['bike'=>$bike]);
+    }
+    /**
+     * _________________________________________________________
+     *
+     * destroy()
+     * ---------------------------------------------------------
+     * Elimina la moto confirmada definitivamente.
+     *
+     * @param  Bike  $bike
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy(Bike $bike) {
+
+
+        // borra la moto de la base de datos
+        $bike->delete();
+
+        // devuelve al usuario a la vista del listado de motos
+        // muestra mensaje de exito de la operación con una variable de sesión flaseada
+        return redirect('bikes')
+            ->with('success', "Moto $bike->marca $bike->modelo eliminada");
     }
 }

@@ -9,5 +9,6 @@ class Bike extends Model{
     use HasFactory;
 
     // Campos a los que se permite hacer asignación masiva desde la request a la BDD
-    protected $fillable =['marca','modelo', 'kms', 'precio', 'matriculada'];
+    protected $fillable =['marca','modelo', 'kms', 'precio',
+                         'matriculada' ,'matricula', 'color'];
 }
