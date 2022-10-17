@@ -174,6 +174,7 @@ return [
         // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
+        // <FIXME:1 class="1">1.4</FIXME:1>     App\Providers\ComposerServiceProvider::class,
 
     ],
 
@@ -234,7 +235,7 @@ return [
     | Favicon
     |--------------------------------------------------------------------------
     |
-    | 
+    |
     |
     */
     'favicon'=>env('LOGO_FILE', 'asset(imgagenes/template/logo.png)')

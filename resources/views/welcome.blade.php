@@ -1,3 +1,5 @@
+@php($pagina='portada')
+
 @extends('layouts.master')
 
 @section('titulo', 'Welcome Larabikes')

@@ -16,13 +16,17 @@
 
     <!-- listado de motos en la zona CENTRAL-->
     <table class="table table-striped table-bordered">
-        <tr>
-            <th>ID</th>
-            <th>Marca</th>
-            <th>Modelo</th>
-            <th>Operaciones</th>
-        </tr>
-        @foreach($bikes as $bike)
+    @forelse($bikes as $bike)
+
+        @if ($loop->first)
+            <tr>
+                <th>ID</th>
+                <th>Marca</th>
+                <th>Modelo</th>
+                <th>Operaciones</th>
+            </tr>
+        @endif
+
             <tr>
                 <td>{{$bike->id}}</td>
                 <td>{{$bike->marca}}</td>
@@ -42,10 +46,17 @@
                     </a>
                 </td>
             </tr>
-        @endforeach
+
+        @if ($loop->last)
+            <tr>
+                <td colspan="4">Mostrando {{sizeof($bikes)}} de {{$total}}.</td>
+            <tr>
+        @endif
+    @empty
         <tr>
-            <td colspan="4">Mostrando {{sizeof($bikes)}} de {{$total}}.</td>
-        <tr>
+            <td colspan="3">No hay motos para mostrar</td>
+        </tr>
+    @endforelse
     </table>
 
 @endsection

@@ -20,24 +20,43 @@
 
 
         <!--PARTE SUPERIOR-->
+        <!--MENSAJES condicionados al entorno-->
+        @env(['local', 'test'])
+            <x-local :mode="App::environment()" />
+        @endenv
+
+        @env(['staging', 'production'])
+            <x-production/>
+        @endenv
+
+
         @section('navegacion')
+        {{--@php($pagina = Route::currentRouteName())--}}
+        @php($pagina = $pagina ?? '')
         <nav>
-            <ul class="nav nav-pills my-3">
+            <ul class="nav nav-pills flex-column flex-sm-row my-3">
                 <li class="nav-item mr-2">
                     <figure>
-                        <a clas="nav-link" href="{{url('/')}}">
+                        <a clas="nav-link {{$pagina=='portada'? 'active':''}}"
+                        href="{{url('/')}}">
                             <img id="inicio" alt="logo larabaikes"
                                 src="{{asset(config('app.favicon'))}}"
-                                width="70">
+                                width="80">
                         </a>
                     </figure>
                 </li>
                 <li class="nav-item mr-2">
-                    <a class="nav-link" href="{{route('bikes.index')}}">Garaje</a>
+                    <a class="nav-link {{$pagina=='bikes.index'?'active':''}}"
+                    href="{{route('bikes.index')}}">Garaje</a>
                 </li>
+
+                <!--Muestra nueva moto solo para usuarios ifentificados-->
+                @auth
                 <li class="nav-item">
-                    <a class="nav-link" href="{{route('bikes.create')}}">Nueva Moto</a>
+                    <a class="nav-link {{$pagina=='bikes.create'?'active':''}}"
+                     href="{{route('bikes.create')}}">Nueva Moto</a>
                 </li>
+                @endauth
             </ul>
         </nav>
         @show
@@ -58,10 +77,25 @@
 
 
             <!--inclusión condicionada de sub-vistas -->
-            @includeWhen(Session::has('success'), 'layouts.success')
-            @includeWhen($errors->any(), 'layouts.error')
+            @if(Session::has('success'))
+                <x-alert type="success" message="{{ Session::get('success') }}"/>
+            @endif
+
+            @if($errors->any())
+                <x-alert type="danger" message="Se han producido errores:">
+                    <ul>
+                        @foreach ($errors->all() as $error)
+                            <li>{{$error}}</li>
+                        @endforeach
+                    </ul>
+                </x-alert>
+            @endif
 
 
+
+
+            <p><FIXME:1 calss="1">1.5_arreglar: LAR09</FIXME:1>
+            Contamos con un catálogo de {{--$total--}} motos.</p>
 
             <!--yield mostrará la sección "contenido de la vista hija"-->
             @yield('contenido')
@@ -81,7 +115,7 @@
         <!--PARTE INFERIOR-->
         @section('pie')
         <footer class="page-footer font-small p-4 bg-light">
-            <p>Aplicación creada por (TODO: AUTOR) como ejemplo de clase.
+            <p>Aplicación creada por <b>{{$autor}}</b> como ejemplo de clase.
                 Desdarrollada haciendo usu de <b>Laravel</b> y <b>Bootstrap</b>.
             </p>
         </footer>

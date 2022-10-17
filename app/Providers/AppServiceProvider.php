@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Pagination\Paginator;
+use Illuminate\Support\Facades\View;
 
 class AppServiceProvider extends ServiceProvider{
     /**
@@ -21,7 +22,14 @@ class AppServiceProvider extends ServiceProvider{
      * @return void
      */
     public function boot()    {
+
         // indacar que usamos bootstrap para el paginador
         Paginator::useBootstrap();
+
+        /**
+         *| Mostrar la variable autor en todas las vistas
+         *| con share() dela facada View
+         */
+         View::share('autor','Robert Sallent');
     }
 }

@@ -27,10 +27,10 @@ class BikeUpdateRequest extends BikeRequest{
 
         //retorna la rega de la matrícula modificada y las regas del padre.
         return [
-            'matricula'=>"required_if:matriculada, true|
+            'matricula'=>"required_if:matriculada, 1|
                           nullable|
                           regex:/^\d{4}[B-Z]{3}$/i|
                           unique:bikes, matricula, $id"
-        ]+parent::rules();
+        ]+parent::rules(); // <FIXME:2 class="2">2.3 required_if:matriculada, 1</FIXME:2>
     }
 }

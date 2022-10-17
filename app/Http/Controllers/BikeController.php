@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\BikeRequest;
 use Illuminate\Http\Request;
 use App\Models\Bike;
+use Illuminate\Support\Facades\View;
 
 class BikeController extends Controller{
 
@@ -15,8 +16,7 @@ class BikeController extends Controller{
     |   1. index()
     |===========================================================
      */
-    /**
-     * _________________________________________________________
+    /** _________________________________________________________
      *
      * index()
      * ---------------------------------------------------------
@@ -25,23 +25,26 @@ class BikeController extends Controller{
      * @return \Illuminate\Http\Response
      */
     public function index(){
+
         /**
-        * Recupera las motos de la BDD usando el modelo
-        * Ordenado por id descendente y
-        * Paginación de 10 resultados por pagina
+        *| Recupera las motos de la BDD usando el modelo
+        *| Ordenado por id descendente y
+        *| Paginación de 10 resultados por pagina
         */
         $bikes= Bike::orderBy('id','DESC')
             ->paginate(config('pagination.bikes', 10));
 
-        // total de motos en la BDD (para mostrar)
-        $total = Bike::count();
+        /**
+         *| total de motos en la BDD (para mostrar)
+         */
+        $total = Bike::count();// <FIXME:1 class="1">1.1</FIXME:1>lo traslado a ViewComposer
 
         /**
-         * Carga la vista para el listado
-         * la vista se llamará list.blade.php y se encontrará en la carpeta bikes
-         * a las vistas hay que pasarles los datos a modo de array asociativo
+         *| Carga la vista para el listado
+         *| la vista se llamará list.blade.php y se encontrará en la carpeta bikes
+         *| a las vistas hay que pasarles los datos a modo de array asociativo
          */
-        return view('bikes.list',['bikes'=>$bikes, 'total'=>$total]);
+    return View::make('bikes.list',['bikes'=>$bikes ,'total'=>$total]);
     }
 
 
@@ -52,8 +55,7 @@ class BikeController extends Controller{
     |   2.1_ create() y 2.2_ store()
     |===========================================================
      */
-    /**
-     * _________________________________________________________
+    /** _________________________________________________________
      *
      * 2.1_ create()
      * ---------------------------------------------------------
@@ -62,15 +64,15 @@ class BikeController extends Controller{
      * @return \Illuminate\Http\Response
      */
     public function create(){
+
         // Carga la vista con el formulario
         return view('bikes.create');
 
     }
 
-    /**
-    * _________________________________________________________
+    /** _________________________________________________________
      *
-     * 2.2_ store()
+     * 2.2_ store() <FIXME:2 class="2">2.4 validacion</FIXME:2>
      * ---------------------------------------------------------
      * Store a newly created resource in storage.
      *
@@ -101,8 +103,7 @@ class BikeController extends Controller{
     |   3. show()
     |===========================================================
      */
-    /**
-     * _________________________________________________________
+    /** _________________________________________________________
      *
      * 3. show(int $id)
      * ---------------------------------------------------------
@@ -127,8 +128,7 @@ class BikeController extends Controller{
     |   4.1_ edit() y 4.2_update()
     |===========================================================
      */
-    /**
-     * _________________________________________________________
+    /** _________________________________________________________
      *
      * 4.1_ edit()
      * ---------------------------------------------------------
@@ -151,10 +151,9 @@ class BikeController extends Controller{
         return view('bikes.update', ['bike'=>$bike]);
     }
 
-    /**
-     * _________________________________________________________
+    /** _________________________________________________________
      *
-     * 4.2_ update()
+     * 4.2_ update() // <FIXME:2 class="2">2.5 validacion</FIXME:2>
      * ---------------------------------------------------------
      * Update the specified resource in storage.
      *
@@ -164,30 +163,30 @@ class BikeController extends Controller{
      */
     public function update(Request $request, Bike $bike)   {
 
-                // toma los datos del formulario
-                $datos =$request->only('marca', 'modelo', 'kms', 'precio');
+        // toma los datos del formulario
+        $datos =$request->only('marca', 'modelo', 'kms', 'precio');
 
-                // estos datos no se pueden tomar directamente
-                $datos['matriculada'] = $request->has('matriculada')?1:0;
-                $datos['matricula']= $request->has('matriculada')? $request->input('matricula'): NULL;
-                $datos['color'] = $request->input('color') ?? NULL;
-
-
-                // actualiza los cambios de moto en la base de datos
-                $bike->update($request->all());
+        // estos datos no se pueden tomar directamente
+        $datos['matriculada'] = $request->has('matriculada')?1:0;
+        $datos['matricula']= $request->has('matriculada')? $request->input('matricula'): NULL;
+        $datos['color'] = $request->input('color') ?? NULL;
 
 
-                // TODO: encola las cookies
-                // Cookie::queue('lastUpdateID', $bike->id,0);
-                // Cookie::queue('lastUpdateDate', now(),0);
+        // actualiza los cambios de moto en la base de datos
+        $bike->update($datos);
 
-                // carga la misma vista [return back()] y muestra mensaje de exito
-                // muestra al user un mensaje de los cambios realizados con variable de session flaseada
-                // anexar cookies con el último ID
-                return back()
-                    ->with('success', "Moto $bike->marca $bike->modelo actualizada con éxito")
-                   // ->cookie('lastUpdateID', $bike->id,0)
-                   ;
+
+        // TODO: encola las cookies
+        // Cookie::queue('lastUpdateID', $bike->id,0);
+        // Cookie::queue('lastUpdateDate', now(),0);
+
+        // carga la misma vista [return back()] y muestra mensaje de exito
+        // muestra al user un mensaje de los cambios realizados con variable de session flaseada
+        // anexar cookies con el último ID
+        return back()
+            ->with('success', "Moto $bike->marca $bike->modelo actualizada con éxito")
+            // ->cookie('lastUpdateID', $bike->id,0)
+            ;
 
                 /*FIXME: para que no nos salga un saltamontes o cucharacha...
                 |        evitar utilizar checkbox con matriculada en la vista
@@ -206,8 +205,7 @@ class BikeController extends Controller{
     |   5.1_ delete() y 5.2_destroy()
     |===========================================================
      */
-    /**
-     * _________________________________________________________
+    /** _________________________________________________________
      *
      * 5.1_ delete()
      * ---------------------------------------------------------
@@ -221,8 +219,7 @@ class BikeController extends Controller{
         // y recupera la moto para mostrar en la vista de blade
         return view('bikes.delete',['bike'=>$bike]);
     }
-    /**
-     * _________________________________________________________
+    /** _________________________________________________________
      *
      * destroy()
      * ---------------------------------------------------------
