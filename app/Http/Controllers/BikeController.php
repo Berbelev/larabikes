@@ -76,7 +76,7 @@ class BikeController extends Controller{
      * ---------------------------------------------------------
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Http\Requests\BikeRequest  $request
      * @return \Illuminate\Http\Response
      */
     public function store(BikeRequest $request){
