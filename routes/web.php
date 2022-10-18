@@ -6,7 +6,9 @@ use App\Http\Controllers\WelcomeController;
 use Illuminate\Http\Request;
 
 
-
+// formulario para la busqueda de motos
+Route::get('/bikes/search/{marca?}/{modelo?}',[BikeController::class, 'search'])
+        ->name('bikes.search');
 /*
 |==========================================================================
 | Web Routes
@@ -29,6 +31,8 @@ Route::get('/', [WelcomeController::class, 'index'])->name('portada');
 |   CRUD DE MOTOS
 |
 */
+
+
 Route::resource('bikes', BikeController::class);
 
 // FORMULARIO de confirmación para la eliminación de una moto

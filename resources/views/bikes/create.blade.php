@@ -1,6 +1,6 @@
 @extends('layouts.master')
 
-@section('titulo', 'Nueva Moto <FIXME:2 class="2">2.6 validacion</FIXME:2>')
+@section('titulo', 'Nueva Moto ')
 
 @section('contenido')
     <form class="my-2 border p-5" method="POST" action="{{route('bikes.store')}}">

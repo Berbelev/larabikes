@@ -4,6 +4,7 @@
 
 @section('contenido')
     <!-- parte SUPERIOR de la zona CENTRAL-->
+    <!-------------------------------------------------------------------->
     <div class="row">
         <!-- PAGINACIÓN-->
         <div class="col-6 text-start">{{$bikes->links()}}</div>
@@ -13,6 +14,30 @@
                 class="btn btn-success ml-2">+</a></p>
         </div>
     </div>
+    <!------------------------------------------------------------------->
+
+
+    <!-- FORMULARIO para la BUSQUEDA de motos search() -->
+    <form method="GET" action="{{route('bikes.search')}}" class="col-6 row">
+
+        <input name="marca" placeholder="Marca" type="text" maxlength="16"
+                class="col form-control mr-2 mb-2"
+                value="{{ $marca ?? ''}}">
+
+        <input name="modelo" placeholder="Modelo" type="text" maxlength="16"
+                class="col form-control mr-2 mb-2"
+                value="{{ $modelo ?? ''}}">
+
+        <button type="submit" class="col btn btn-primary mr-2 mb-2" >
+            Buscar</button>
+
+        <a  href="{{route('bikes.index')}}">
+            <button type="button" class="col btn btn-primary mb-2">
+                Quitar filtro
+            </button>
+        </a>
+    </form>
+    <!--------------------------------------------------------------------->
 
     <!-- listado de motos en la zona CENTRAL-->
     <table class="table table-striped table-bordered">
@@ -49,7 +74,7 @@
 
         @if ($loop->last)
             <tr>
-                <td colspan="4">Mostrando {{sizeof($bikes)}} de {{$total ?? ''}}.</td>
+                <td colspan="7">Mostrando {{sizeof($bikes)}} de {{$bikes->total()}}.</td>
             <tr>
         @endif
     @empty
@@ -58,6 +83,6 @@
         </tr>
     @endforelse
     </table>
-
+    <!---------------------------------------------------------------------->
 @endsection
 

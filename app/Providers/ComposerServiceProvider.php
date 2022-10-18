@@ -24,6 +24,6 @@ class ComposerServiceProvider extends ServiceProvider{
      */
     public function boot()    {
         // Vincula el ViewComposer a la vista de listado
-        // <FIXME:1 class="1">1.3</FIXME:1>     View::composer('bikes.list', BikeComposer::class);
+        View::composer('*', BikeComposer::class);
     }
 }

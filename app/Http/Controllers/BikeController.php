@@ -35,17 +35,14 @@ class BikeController extends Controller{
         $bikes= Bike::orderBy('id','DESC')
             ->paginate(config('pagination.bikes', 10));
 
-        /**
-         *| total de motos en la BDD (para mostrar)
-         */
-        $total = Bike::count();// <FIXME:1 class="1">1.1</FIXME:1>lo traslado a ViewComposer
+
 
         /**
          *| Carga la vista para el listado
          *| la vista se llamará list.blade.php y se encontrará en la carpeta bikes
          *| a las vistas hay que pasarles los datos a modo de array asociativo
          */
-    return View::make('bikes.list',['bikes'=>$bikes ,'total'=>$total]);
+    return View::make('bikes.list',['bikes'=>$bikes]);
     }
 
 
@@ -73,7 +70,7 @@ class BikeController extends Controller{
 
     /** _________________________________________________________
      *
-     * 2.2_ store() <FIXME:2 class="2">2.4 validacion</FIXME:2>
+     * 2.2_ store()
      * ---------------------------------------------------------
      * Store a newly created resource in storage.
      *
@@ -143,7 +140,7 @@ class BikeController extends Controller{
 
     /** _________________________________________________________
      *
-     * 4.2_ update() // <FIXME:2 class="2">2.5 validacion</FIXME:2>
+     * 4.2_ update()
      * ---------------------------------------------------------
      * Update the specified resource in storage.
      *
@@ -228,5 +225,41 @@ class BikeController extends Controller{
         // muestra mensaje de exito de la operación con una variable de sesión flaseada
         return redirect('bikes')
             ->with('success', "Moto $bike->marca $bike->modelo eliminada");
+    }
+     /*
+    |===========================================================
+    |   BUSCAR MOTOS
+    |   6.1_ search()
+    |===========================================================
+     */
+    /** _________________________________________________________
+     *
+     * 6.1_ search()
+     * ---------------------------------------------------------
+     * Formulario para buscar motos a partir de marca y/o modelo
+     *
+     * @param  Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function search(Request $request)    {
+
+        // 6.1.1 valida lo que viene por request, max:16
+        $request->validate(['marca'=>'max:16','modelo'=>'max:16']);
+
+        // 6.1.2 Toma los valores de la Request
+        $marca = $request->input('marca', '');
+        $modelo = $request->input('modelo', '');
+
+        /**
+         * 6.1.3 Recupera los resultados de Bike where(campo,condición,valor)
+         *      _Añade marca y modelo al paginador, para mantener los resultados
+         */
+        $bikes = Bike::where('marca','like','%'.$marca.'%')
+                     ->where('modelo','like','%'.$modelo.'%')
+                     ->paginate(config('pagination.bikes'))
+                     ->appends(['marca'=>$marca, 'modelo'=>$modelo]);
+
+        // 6.1.4 Retorna la vista con el filtro aplicado
+        return view('bikes.list',['bikes'=>$bikes, 'marca'=>$marca,'modelo'=>$modelo]);
     }
 }

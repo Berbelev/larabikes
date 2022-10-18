@@ -20,14 +20,14 @@ class BikeRequest extends FormRequest{
      *
      * @return array
      */
-    public function rules()    { // <FIXME:2 class="2">2.2</FIXME:2>
+    public function rules()    {
         return [
             'marca'       => 'required|max:255',
             'modelo'      => 'required|max:255',
             'precio'      => 'required|numeric|min:0',
             'kms'         => 'required|integer|min:0',
             'matriculada' => 'required_with:matricula',
-            'matricula  ' => 'required_if:matriculada, 1|
+            'matricula'   => 'required_if:matriculada, 1|
                               nullable|
                               regex:/^\d{4}[B-Z]{3}$/i|
                               unique:bikes|

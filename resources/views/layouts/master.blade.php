@@ -37,7 +37,8 @@
             <ul class="nav nav-pills flex-column flex-sm-row my-3">
                 <li class="nav-item mr-2">
                     <figure>
-                        <a clas="nav-link {{$pagina=='portada'? 'active':''}}"
+                        <a clas="nav-link {{$pagina=='portada'
+                                            ? 'active':''}}"
                         href="{{route('portada')}}">
                             <img id="inicio" alt="logo larabaikes"
                                 src="{{asset(config('app.favicon'))}}"
@@ -46,7 +47,8 @@
                     </figure>
                 </li>
                 <li class="nav-item mr-2">
-                    <a class="nav-link {{$pagina=='bikes.index'?'active':''}}"
+                    <a class="nav-link {{$pagina=='bikes.index'||
+                                        $pagina=='bikes.search'?'active':''}}"
                     href="{{route('bikes.index')}}">Garaje</a>
                 </li>
 
@@ -94,8 +96,8 @@
 
 
 
-            <p><FIXME:1 calss="1">1.5_arreglar: LAR09</FIXME:1>
-            Contamos con un catálogo de {{--$total--}} motos.</p>
+            <p>
+            Contamos con un catálogo de {{ $total ?? '' }} motos.</p>
 
             <!--yield mostrará la sección "contenido de la vista hija"-->
             @yield('contenido')

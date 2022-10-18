@@ -16,14 +16,12 @@ class BikeUpdateRequest extends BikeRequest{
         /**
          * Con implicit binding se mapea automáticamente la instancia del modelo
          * a modo de propiedad de la request
-         * $id = $this->bike>id;
          */
+         $id = $this->bike->id;
 
 
-        /**
-         * Tambén se pued recuperar así:
-         */
-        $id = $this->route('bike');
+
+
 
 
         //retorna la rega de la matrícula modificada y las regas del padre.
@@ -31,7 +29,7 @@ class BikeUpdateRequest extends BikeRequest{
             'matricula'=>"required_if:matriculada, 1|
                           nullable|
                           regex:/^\d{4}[B-Z]{3}$/i|
-                          unique:bikes, matricula, $id"
-        ]+parent::rules(); // <FIXME:2 class="2">2.3 required_if:matriculada, 1</FIXME:2>
+                          unique:bikes,matricula, $id"
+        ]+parent::rules();
     }
 }

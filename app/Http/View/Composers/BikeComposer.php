@@ -14,9 +14,9 @@ class BikeComposer{
      *
      *
      */
-    public function composer(View $view)    {
+    public function compose(View $view)    {
 
-        // <FIXME:1 class="1">1.2</FIXME:1>     $view->with('total', Bike::count());
+        $view->with('total', Bike::count());
     }
 
 

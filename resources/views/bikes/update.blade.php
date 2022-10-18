@@ -1,6 +1,6 @@
 @extends('layouts.master')
 
-@section('titulo', 'Actualizar Moto <FIXME:2 class="2">2.1 regals de validación</FIXME:2>')
+@section('titulo', 'Actualizar Moto')
 
 @section('contenido')
     <!-- Formulario de edición - falseo a valor PUT-->
