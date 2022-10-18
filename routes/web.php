@@ -5,6 +5,8 @@ use App\Http\Controllers\BikeController;   // include BikeController
 use App\Http\Controllers\WelcomeController;
 use Illuminate\Http\Request;
 
+
+
 /*
 |==========================================================================
 | Web Routes
@@ -34,6 +36,19 @@ Route::get('bikes/{bike}/delete', [BikeController::class , 'delete'])
     ->name('bikes.delete');
 
 
+
+
+
+/*
+|==========================================================================
+|  ZONA PARA PRUEBAS
+|==========================================================================
+*/
+
+
+
+// FIN DE LA ZONA DE PRUEBAS
+
 /*
 |==========================================================================
 |  RUTA DE FALLBACK (debe ser la ultima en el fichero)
@@ -42,3 +57,10 @@ Route::get('bikes/{bike}/delete', [BikeController::class , 'delete'])
 Route::fallback([WelcomeController::class, 'index']);
 
 
+/** TODO: Poner las rutas en chaché
+ * .../larabikes$ php artisan route:cache
+* Route cache cleared!
+* Routes cached successfully!
+*  .../larabikes$ php artisan rout:clear
+* Route cache cleared!
+ */

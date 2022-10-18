@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\BikeRequest;
+use App\Http\Requests\BikeUpdateRequest;
 use Illuminate\Http\Request;
 use App\Models\Bike;
 use Illuminate\Support\Facades\View;
@@ -105,17 +106,14 @@ class BikeController extends Controller{
      */
     /** _________________________________________________________
      *
-     * 3. show(int $id)
+     * 3. show()
      * ---------------------------------------------------------
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param  \App\Models\Bike  $bike
      * @return \Illuminate\Http\Response
      */
-    public function show($id) {
-        //recupera la moto con el id deseado
-        // si no lo encuentra generará un error 404
-        $bike = Bike::findOrFail($id);
+    public function show(Bike $bike) {
 
         //carga la vista correspondiente
         // y le pasa la moto
@@ -134,18 +132,10 @@ class BikeController extends Controller{
      * ---------------------------------------------------------
      * Show the form for editing the specified resource.
      *
-     * @param  Bike  $bike
+     * @param  \App\Models\Bike  $bike
      * @return \Illuminate\Http\Response
      */
     public function edit(Bike $bike)    {
-
-        // recupera la moto con el id deseado
-        // si no la encuentra generará un error  404
-
-        // modificación 0.3.0
-        // usamos implicit binding, por tanto no hace falta recuperar el objeto de tipo moto
-        // porque ya lo recupera elocuent
-        // $bike = Bike::findOrFail($id);
 
         // carga la vista con el formulario para modificar la moto
         return view('bikes.update', ['bike'=>$bike]);
@@ -157,11 +147,11 @@ class BikeController extends Controller{
      * ---------------------------------------------------------
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param  App\Http\Requests\BikeUpdateRequest  $request
+     * @param  \App\Models\Bike  $bike
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Bike $bike)   {
+    public function update(BikeUpdateRequest $request, Bike $bike)   {
 
         // toma los datos del formulario
         $datos =$request->only('marca', 'modelo', 'kms', 'precio');
@@ -211,7 +201,7 @@ class BikeController extends Controller{
      * ---------------------------------------------------------
      * Muestra el formulario de confirmación
      *
-     * @param  Bike  $bike
+     * @param  \App\Models\Bike  $bike
      * @return \Illuminate\Http\Response
      */
     public function delete(Bike $bike)    {
@@ -225,7 +215,7 @@ class BikeController extends Controller{
      * ---------------------------------------------------------
      * Elimina la moto confirmada definitivamente.
      *
-     * @param  Bike  $bike
+     * @param  \App\Models\Bike  $bike
      * @return \Illuminate\Http\Response
      */
     public function destroy(Bike $bike) {

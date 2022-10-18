@@ -31,14 +31,14 @@
 
 
         @section('navegacion')
-        {{--@php($pagina = Route::currentRouteName())--}}
-        @php($pagina = $pagina ?? '')
+        @php($pagina = Route::currentRouteName())
+
         <nav>
             <ul class="nav nav-pills flex-column flex-sm-row my-3">
                 <li class="nav-item mr-2">
                     <figure>
                         <a clas="nav-link {{$pagina=='portada'? 'active':''}}"
-                        href="{{url('/')}}">
+                        href="{{route('portada')}}">
                             <img id="inicio" alt="logo larabaikes"
                                 src="{{asset(config('app.favicon'))}}"
                                 width="80">
@@ -103,9 +103,10 @@
 
 
             <div class="btn-group" role="group" arial-label="Links">
+
                 <!--define y muestra la sección enlaces -->
                 @section('enlaces')
-                    <a href="{{ url('/') }}" class="btn btn-primary m-2">Inicio</a>
+                    <a href="{{ route('portada') }}" class="btn btn-primary m-2">Inicio</a>
                 @show
 
             </div>

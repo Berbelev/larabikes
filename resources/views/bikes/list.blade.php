@@ -49,7 +49,7 @@
 
         @if ($loop->last)
             <tr>
-                <td colspan="4">Mostrando {{sizeof($bikes)}} de {{$total}}.</td>
+                <td colspan="4">Mostrando {{sizeof($bikes)}} de {{$total ?? ''}}.</td>
             <tr>
         @endif
     @empty

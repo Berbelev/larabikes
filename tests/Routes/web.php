@@ -95,3 +95,114 @@ Route::fallback([WelcomeController::class, 'index']);
 #POSTMAN
     #GET
         http://localhost:8000/patata  // 200 OK
+
+
+|==========================================================================
+|   PARAMETROS EN LA RUTA
+|==========================================================================
+*/
+ // ruta con dos parámetros variables
+Route::get('test/{nombre}/{edad}', function($nombre, $edad){
+    return "Hola $nombre, tienes $edad años.";
+});
+// ruta con 1 parámetro
+Route::get('test/{nombre}', function($nombre){
+    return "Hola $nombre, bienvenido al curso.";
+});
+
+
+/*
+|==========================================================================
+|  SOLAPAMIENTO DE RUTAS
+|==========================================================================
+*/
+//
+Route::get('test/{id}', function($id){
+    return "Intentas visualizar la moto $id.";
+});
+//
+Route::get('test/create', function(){
+    return "Intentas visualizar una nueva moto.";
+});
+
+/*
+|==========================================================================
+|  SOLUCIÓN AL SOLAPAMIENTO DE RUTAS
+|==========================================================================
+*/
+//
+Route::get('test/create', function(){
+    return "Intentas visualizar una nueva moto.";
+});
+//
+Route::get('test/{id}', function($id){
+    return "Intentas visualizar la moto $id.";
+});
+
+/*
+|==========================================================================
+|  RUTA CON PARAMETROS OPCIONALES (SEARCH)
+|==========================================================================
+*/
+use App\Models\Bike;
+
+// ruta con dos parámetros opcionales
+Route::get(
+    'bikes/search/{marca?}/{modelo?}',
+    function($marca ='', $modelo=''){
+        // busca las motos con esa marca y modelo
+        $bikes=Bike::where('marca', 'like', '%'.$marca.'%')
+                   ->where('modelo', 'like','%'.$modelo.'%')
+                   ->paginate(config('pagination.bikes'));
+
+    return view('bikes.list', ['bikes'=>$bikes]);
+    }
+);
+//
+
+/*
+|==========================================================================
+|  EXPRESIONES REGULARES EN LA RUTAS
+|==========================================================================
+*/
+//
+Route::get('test/{id}', function($id){
+    return "Has accedido por la primera ruta.";
+})->where('id', '^\d{1,11}$'); // de 1 a 11 dígitos
+//
+Route::get('test/{dni}', function($dni){
+    return "Has accedido por la segunda ruta.";
+})->where('dni', '^[\dXYZ]\d{7}[A-Z]$'); // DNI
+//
+Route::get('test/{otro}', function($otro){
+    return "$otro no es un número ni un DNI.";
+});
+
+/*
+|==========================================================================
+|  INFORMACIÓN SOBRE LA RUTA
+|==========================================================================
+*/
+//Route::current()  --->retorna un objeto Route
+Route::get('test', function(){
+
+    dd(Route::current());
+
+    return "Aquí no vamos a llegar, porque hay un dd() antes.";
+});
+
+//
+Route::get('test', function(){
+
+    dd(Route::currentRouteName());
+
+    return "Aquí no vamos a llegar, porque hay un dd() antes.";
+});
+
+//
+Route::get('test', function(){
+
+    dd(Route::currentRouteAction());
+
+    return "Aquí no vamos a llegar, porque hay un dd() antes.";
+});
