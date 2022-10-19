@@ -150,6 +150,10 @@ class BikeController extends Controller{
      */
     public function update(BikeUpdateRequest $request, Bike $bike)   {
 
+        // comporbar la validez de la firma de la URL
+        if(!$request->hasValidSignature())
+            abort(401, 'La firma de la URL ha caducado :(');
+
         // toma los datos del formulario
         $datos =$request->only('marca', 'modelo', 'kms', 'precio');
 
@@ -211,11 +215,15 @@ class BikeController extends Controller{
      * destroy()
      * ---------------------------------------------------------
      * Elimina la moto confirmada definitivamente.
-     *
+     * @param  Request $request
      * @param  \App\Models\Bike  $bike
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Bike $bike) {
+    public function destroy(Request $request, Bike $bike) {
+
+        // comporbar la validez de la firma de la URL
+        if(!$request->hasValidSignature())
+            abort(401, 'La firma de la URL no se pudo validar');
 
 
         // borra la moto de la base de datos

@@ -99,15 +99,16 @@
             <p>
             Contamos con un catálogo de {{ $total ?? '' }} motos.</p>
 
-            <!--yield mostrará la sección "contenido de la vista hija"-->
+            <!--yield mostrará la sección "contenido de la vista hija"--------------------->
             @yield('contenido')
 
 
 
             <div class="btn-group" role="group" arial-label="Links">
 
-                <!--define y muestra la sección enlaces -->
+                <!--define y muestra la sección enlaces ------------------------------------>
                 @section('enlaces')
+                    <a href="{{ url()->previous() }}" class="btn btn-primary m-2">Atrás</a>
                     <a href="{{ route('portada') }}" class="btn btn-primary m-2">Inicio</a>
                 @show
 
@@ -115,7 +116,7 @@
         </main>
 
 
-        <!--PARTE INFERIOR-->
+        <!--PARTE INFERIOR---------------------------------------------------------------------->
         @section('pie')
         <footer class="page-footer font-small p-4 bg-light">
             <p>Aplicación creada por <b>{{$autor}}</b> como ejemplo de clase.

@@ -4,7 +4,9 @@
 
 @section('contenido')
     <!-- Formulario de confirmación de eliminación - falseo a valor DELETE-->
-    <form class="my-2 border p-5" method="POST" action="{{route('bikes.destroy', $bike->id)}}">
+    <form class="my-2 border p-5" method="POST"
+          action="{{URL::signedRoute('bikes.destroy', $bike->id)}}">
+
         {{csrf_field()}}
         <input name="_method" type="hidden" value="DELETE">
 

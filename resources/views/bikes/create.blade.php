@@ -3,7 +3,9 @@
 @section('titulo', 'Nueva Moto ')
 
 @section('contenido')
-    <form class="my-2 border p-5" method="POST" action="{{route('bikes.store')}}">
+    <form class="my-2 border p-5" method="POST"
+          action="{{route('bikes.store')}}">
+
         {{csrf_field()}}
         <div class="form-group row">
             <label for="inputMarca" class="col-sm-2 col-form-label">

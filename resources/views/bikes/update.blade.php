@@ -4,7 +4,11 @@
 
 @section('contenido')
     <!-- Formulario de edición - falseo a valor PUT-->
-    <form class="my-2 border p-5" method="POST" action="{{route('bikes.update', $bike->id)}}">
+    <form class="my-2 border p-5" method="POST"
+    action="{{
+        URL::temporarySignedRoute('bikes.update', now()->addMinutes(1),$bike->id)
+        }}">
+
         {{csrf_field()}}
         <input name="_method" type="hidden" value="PUT">
 

@@ -1,0 +1,39 @@
+URL FIRMADAS
+
+    signedRoute()  de la Fachada URL:
+
+            action="{{URL::signedRoute('bikes.destroy', $bike->id)}}"
+
+
+    hasValidSignature()  metodo llamado  en el controlador para validar la ruta
+
+        public function destroy(Request $request, Bike $bike) {
+
+            // comporbar la validez de la firma de la URL
+            if(!$request->hasValidSignature())
+                abort(401, 'La firma de la URL no se pudo validar');
+                ...
+
+    o dejar el metodo controlador sin esta comprobación y sin la inyección request
+    Y poner en la ruta delete, el :
+       -> midleware('signed')
+
+
+
+
+==================================================================
+RUTAS FIRMADAS TEMPORALES
+
+temporarySignedRoute()     de la Fachada URL
+
+action="{{
+    URL::temporarySignedRoute('bikes.store', now()->addMinutes(1),$bike->id)
+    }}">
+
+    y
+
+    // comporbar la validez de la firma de la URL
+            if(!$request->hasValidSignature())
+                abort(401, 'La firma de la URL no se pudo validar');
+                ...
+
