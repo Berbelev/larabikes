@@ -7,6 +7,7 @@ use App\Http\Requests\BikeUpdateRequest;
 use Illuminate\Http\Request;
 use App\Models\Bike;
 use Illuminate\Support\Facades\View;
+use Illuminate\Support\Facades\Cookie;
 
 class BikeController extends Controller{
 
@@ -167,20 +168,18 @@ class BikeController extends Controller{
         $bike->update($datos);
 
 
-        // TODO: encola las cookies
-        // Cookie::queue('lastUpdateID', $bike->id,0);
-        // Cookie::queue('lastUpdateDate', now(),0);
+        // encola las cookies
+        Cookie::queue('lastUpdateID', $bike->id,0);
+        Cookie::queue('lastUpdateDate', now(),0);
 
         // carga la misma vista [return back()] y muestra mensaje de exito
         // muestra al user un mensaje de los cambios realizados con variable de session flaseada
-        // anexar cookies con el último ID
         return back()
-            ->with('success', "Moto $bike->marca $bike->modelo actualizada con éxito")
-            // ->cookie('lastUpdateID', $bike->id,0)
-            ;
+            ->with('success', "Moto $bike->marca $bike->modelo actualizada con éxito");
 
-                /*FIXME: para que no nos salga un saltamontes o cucharacha...
-                |        evitar utilizar checkbox con matriculada en la vista
+
+                /*FIXME:1 para que salga un bug ...
+                |        evitar checkbox con matriculada en la vista
                 |        al desmarcarlo, Eloquente no realiza la modificación en la BDD
                 |
                 |       SOLUCIÓN: usar desplegables o botones de radio para matriculada

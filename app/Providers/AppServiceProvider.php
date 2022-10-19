@@ -6,6 +6,7 @@ use Illuminate\Support\ServiceProvider;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\View;
 
+
 class AppServiceProvider extends ServiceProvider{
     /**
      * Register any application services.
@@ -31,5 +32,11 @@ class AppServiceProvider extends ServiceProvider{
          *| con share() dela facada View
          */
          View::share('autor','Robert Sallent');
+
+         /**
+         *| Definición de un marco para las respuestas
+         *|
+         */
+
     }
 }
