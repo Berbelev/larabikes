@@ -92,7 +92,8 @@ class BikeController extends Controller{
         // redirecciona a los detalles de la moto creada
         return redirect()
             ->route('bikes.show', $bike->id)
-            ->with('success', "Moto $bike->marca $bike->modelo añadida con éxito.");
+            ->with('success', "Moto $bike->marca $bike->modelo añadida con éxito.")
+            ->cookie('lastInsertID', $bike->id,0);
 
     }
 
@@ -214,7 +215,7 @@ class BikeController extends Controller{
      * destroy()
      * ---------------------------------------------------------
      * Elimina la moto confirmada definitivamente.
-     * @param  Request $request
+     * @param  \Illuminate\Http\Request $request
      * @param  \App\Models\Bike  $bike
      * @return \Illuminate\Http\Response
      */
@@ -245,7 +246,7 @@ class BikeController extends Controller{
      * ---------------------------------------------------------
      * Formulario para buscar motos a partir de marca y/o modelo
      *
-     * @param  Request  $request
+     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
     public function search(Request $request)    {
@@ -268,5 +269,34 @@ class BikeController extends Controller{
 
         // 6.1.4 Retorna la vista con el filtro aplicado
         return view('bikes.list',['bikes'=>$bikes, 'marca'=>$marca,'modelo'=>$modelo]);
+    }
+
+         /*
+    |===========================================================
+    |
+    |   7.1_ editLast()
+    |===========================================================
+     */
+    /** _________________________________________________________
+     *
+     * 7.1_ editLast()
+     * ---------------------------------------------------------
+     *
+     * Edita la última moto creada (para ver funcionamiento cookies)
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function editLast(){
+        // comprobar si llega la cookie 'lastInsertId' con el ID de la
+        // última moto que fué creada por el usuario
+
+        // si no llega, lo llevamos al formulario de creación nueva moto
+        if(!Cookie::has('lastInsertID'))
+            return redirect()->route('bikes.create');
+
+        // si llega, recuperamos el dato de la cookie(el id)
+        // y lo llevamos a la vista de edición de la moto
+        $id = Cookie::get('lastInsertID');
+        return redirect()->route('bikes.edit', $id);
     }
 }

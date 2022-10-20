@@ -5,6 +5,9 @@ use App\Http\Controllers\BikeController;   // include BikeController
 use App\Http\Controllers\WelcomeController;
 use Illuminate\Http\Request;
 
+// atajo para editar la última moto creada (para el ejemplo de cookies)
+Route::get('/bikes/editlast', [BikeController::class, 'editLast'])
+        ->name('bikes.editlast');
 
 // formulario para la busqueda de motos
 Route::get('/bikes/search/{marca?}/{modelo?}',[BikeController::class, 'search'])
