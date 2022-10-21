@@ -120,7 +120,7 @@
         @section('pie')
         <footer class="page-footer font-small p-4 bg-light">
             <p>Aplicación creada por <b>{{$autor}}</b> como ejemplo de clase.
-                Desdarrollada haciendo usu de <b>Laravel</b> y <b>Bootstrap</b>.
+                Desarrollada haciendo <i class="fas fa-user-cog    "></i> de <b>Laravel</b> y <b>Bootstrap</b>.
             </p>
         </footer>
         @show

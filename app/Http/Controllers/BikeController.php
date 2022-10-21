@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Models\Bike;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Cookie;
+use Illuminate\Support\Facades\Storage;
 
 class BikeController extends Controller{
 
@@ -80,16 +81,29 @@ class BikeController extends Controller{
      */
     public function store(BikeRequest $request){
 
-        // Recuperar datos del formulario excepto la imagen
+        // _1_ RECUPERAR datos del formulario excepto la imagen
         $datos = $request->only(['marca','modelo', 'precio',
                                  'kms', 'matriculada', 'matricula',
                                   'color']);
 
-        // creación y guardado de la nueva moto
+        // _2_ NULL será el valor por defecto de la imagen
+        $datos +=['imagen'=>NULL];
+
+        // _3_ Recuperación de la imagen
+        if($request->hasFile('imagen')){
+
+            // _3.a_sube la imagen al directorio indicado en el fichero config
+            $ruta=$request->file('imagen')->store(config('filesystems.bikesImageDir'));
+
+            // _3.b_asignar a la imagen el nombre del fichero para ser guadado en la BDD
+            $datos['imagen']= pathinfo($ruta, PATHINFO_BASENAME);
+        }
+
+        // _4_ Creción y guardado de la nueva moto
         $bike = Bike::create($datos);
 
 
-        // redirecciona a los detalles de la moto creada
+        // _5_ redireccion a los detalles de la moto creada
         return redirect()
             ->route('bikes.show', $bike->id)
             ->with('success', "Moto $bike->marca $bike->modelo añadida con éxito.")
@@ -121,7 +135,7 @@ class BikeController extends Controller{
 
     /*
     |===========================================================
-    |   DETALLES DE LA MOTO
+    |   ACTUALIZACIÓN DE LA MOTO
     |   4.1_ edit() y 4.2_update()
     |===========================================================
      */
@@ -164,9 +178,26 @@ class BikeController extends Controller{
         $datos['matricula']= $request->has('matriculada')? $request->input('matricula'): NULL;
         $datos['color'] = $request->input('color') ?? NULL;
 
+        // SI llega una nueva imágen...
+        if($request->hasFile('imagen')){
+            // ... SI IMAGEN,
+                // ... marcamos la imagen antigua para ser borrada el update va bien...
 
-        // actualiza los cambios de moto en la base de datos
-        $bike->update($datos);
+            // sube la imagen al directorio indicado en el fichero de confi
+            // nos quedamos solo con el nombre del fichero para añadirlo a la BDD
+        }
+        // SI el caso es que nos piden eliminar la imágen....
+            // poner campo imagen a NULL
+            // recuperar el directorio para la imagen aBorrar
+
+        // SI todo va bien al actualizar
+            //...y SI la variable aBorrar tiene valor...
+                // Borra la foto antigua
+        // SIno , si falla algo....
+            // ...y SI la variable imgenNueva tiene valor
+                // Borra la imagen nueva
+
+
 
 
         // encola las cookies
@@ -226,8 +257,11 @@ class BikeController extends Controller{
             abort(401, 'La firma de la URL no se pudo validar');
 
 
-        // borra la moto de la base de datos
-        $bike->delete();
+        // borra la moto de la base de datos y si tiene imagen...
+        if($bike->delete() && $bike->imagen)
+            // ... elimina la imagen
+            Storage::delete(config('filesystems.bikesImageDir').'/'.$bike->imagen);
+
 
         // devuelve al usuario a la vista del listado de motos
         // muestra mensaje de exito de la operación con una variable de sesión flaseada

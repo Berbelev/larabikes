@@ -4,12 +4,13 @@
 
 @section('contenido')
     <!-- Formulario de edición - falseo a valor PUT-->
-    <form class="my-2 border p-5" method="POST"
-    action="{{
-        URL::temporarySignedRoute('bikes.update', now()->addMinutes(1),$bike->id)
-        }}">
+    <form class="my-2 border p-5" method="POST" enctype="multipart/form-data"
+            action="{{
+                URL::temporarySignedRoute('bikes.update', now()->addMinutes(1),$bike->id)
+                }}">
 
         {{csrf_field()}}
+        <!-- por PUT-->
         <input name="_method" type="hidden" value="PUT">
 
         <!-- Marca-->
@@ -79,6 +80,7 @@
                     id="chkColor" {{$bike->color? 'checked': ''}}>
                 <label for="chkColor" class="form-check-label">Indicar el color</label>
             </div>
+
             <div class="form-check col-sm-6">
                 <label for="inputColor" class="col-sm-2 form-label">Color</label>
                 <input name="color" type="color" class="up form-control form-control-color"
@@ -92,6 +94,50 @@
             inputColor.disabled = !chkColor.checked;
             }
         </script>
+
+        <!--Actualización para la imagen - subida de archivos-->
+        <div class="form-group row my-3">
+            <div class="col-sm-9">
+                <!--Opciones para subir archivo-->
+                    <!--Si hay imagen->Sustituir Imagen -->
+                    <!--Si NO hay imagen->Añadir Imagen -->
+                <label for="inputImagen" class="col-sm-2 col-form-label">
+                    {{$bike->imagen?'Sustituir': 'Añadir'}} imagen
+                </label>
+                <input name="imagen" type="file" class="form-control-file"
+                    id="inputImagen">
+
+                @if ($bike->imagen)
+                    <!-- Checkbox Eliminar Imagen-->
+                    <div class="form-check my-3">
+                        <label class="form-check-label" for="inputEliminar">
+                            <input type="checkbox" class="form-check-input" name="eliminarimagen"
+                                    id="inputEliminar" value="checkedValue" >
+                        Eliminar imagen
+                        </label>
+                    </div>
+                    <script>
+                        // si se marca el checkbox eliminarimagen
+                        inputEliminar.onchange =function(){
+                            // desabilita el imput Sustituir Imagen
+                            inputImagen.disabled=this.checked;
+                        }
+                    </script>
+                @endif
+            </div>
+
+            <div class="col-sm-3">
+                <label>Imagen actual :</label>
+                <img class="rounded img-thumbnail my-3"
+                    alt="Imagen de {{$bike->marca}} {{$bike->modelo}}"
+                    title="Imagen de {{$bike->marca}} {{$bike->modelo}}"
+                    src="{{
+                            $bike->imagen?
+                            asset('storage/'.config('filesystems.bikesImageDir')).'/'.$bike->imagen:
+                            asset('storage/'.config('filesystems.bikesImageDir')).'/'.'/default.jpg'
+                        }}">
+            </div>
+        </div>
 
         <div class="form-group row">
             <button type="submit" class="btn btn-success m-2 mt-5">Guardar</button>

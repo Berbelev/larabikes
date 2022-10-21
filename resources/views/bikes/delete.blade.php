@@ -10,6 +10,15 @@
         {{csrf_field()}}
         <input name="_method" type="hidden" value="DELETE">
 
+        <figure>
+            <figcaption>Imagen actual: </figcaption>
+            <img class="rounded" style="max-width: 400px"
+                 alt="Imagen de {{$bike->marca}} {{$bike->modelo}}"
+                 src="{{$bike->imagen?
+                 asset('storage/'.config('filesystems.bikesImageDir')).'/'.$bike->imagen:
+                 asset('storage/'.config('filesystems.bikesImageDir')).'/'.'/default.jpg'
+                 }}">
+        </figure>
 
         <label for="confirmdelete">Confirmar el borrado de {{"$bike->marca $bike->modelo"}}</label>
         <input type="submit" class="btn btn-danger m-4" alt="Borrar" title="Borrar"
