@@ -206,3 +206,12 @@ Route::get('test', function(){
 
     return "Aquí no vamos a llegar, porque hay un dd() antes.";
 });
+/*
+|==========================================================================
+|  MACRO PARA LAS RESPUESTAS
+|==========================================================================
+*/
+//... Añadida clausura mausculas a appserviceprovider
+Route::get('/saludar/gritando', function(){
+    return response()->mayusculas('Hola Mundo');
+});

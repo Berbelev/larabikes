@@ -5,6 +5,8 @@ namespace App\Providers;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\View;
+use Illuminate\Support\Facades\Response;
+use Illuminate\Support\Facades\Route;
 
 
 class AppServiceProvider extends ServiceProvider{
@@ -34,9 +36,21 @@ class AppServiceProvider extends ServiceProvider{
          View::share('autor','Robert Sallent');
 
          /**
-         *| Definición de un marco para las respuestas
+         *| Definición de un macro para las respuestas
          *|
          */
+        Response::macro('mayusculas', function($datos){
+            return Response::make(strtoupper($datos));
+        });
+
+        /**
+         *| Personalizacion de las rutas a castellano:
+         *|
+         */
+        Route::resourceVerbs([
+            'create'=>'crear',
+            'edit'=>'editar'
+        ]);
 
     }
 }

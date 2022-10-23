@@ -1,18 +1,13 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\BikeController;   // include BikeController
-use App\Http\Controllers\WelcomeController;
 use Illuminate\Http\Request;
 
-// atajo para editar la última moto creada (para el ejemplo de cookies)
-Route::get('/bikes/editlast', [BikeController::class, 'editLast'])
-        ->name('bikes.editlast');
+use App\Http\Controllers\ShopController;
+use App\Http\Controllers\BikeController;   // include BikeController
+use App\Http\Controllers\WelcomeController;
 
-// formulario para la busqueda de motos
-//.FIXME:2 ¿deben de ir los parametros opcionales por la query string?
-Route::get('/bikes/search/{marca?}/{modelo?}',[BikeController::class, 'search'])
-        ->name('bikes.search');
+
 /*
 |==========================================================================
 | Web Routes
@@ -23,29 +18,54 @@ Route::get('/bikes/search/{marca?}/{modelo?}',[BikeController::class, 'search'])
 | contains the "web" middleware group. Now create something great!
 |
 | (Portada)
-|
+|   Single action Controler __invoke()
 */
 
-Route::get('/', [WelcomeController::class, 'index'])->name('portada');
+Route::get('/', WelcomeController::class)->name('portada');
 
+// ATAJO PARA EDITAR LA ÚLTIMA MOTO CREADA (para el ejemplo de cookies)
+Route::get('/bikes/editlast', [BikeController::class, 'editLast'])
+        ->name('bikes.editlast');
+
+// FORMULARIO PARA BUSQUEDA DE MOTOS
+// buscar motos por marca(obligatorio) y modelo (opcional)
+Route::match(['GET','POST'], '/motos/buscar',
+                            [BikeController::class, 'search'])
+        ->name('bikes.search');
 /*
-|==========================================================================
+//FIXME:2 mostrar la query string de forma amigable
+Route::get('/bikes/search/{marca?}/{modelo?}',[BikeController::class, 'search'])
+        ->name('bikes.search');
+*/
+
+/*==========================================================================
 | Web Routes de BikeController
 |==========================================================================
-|   CRUD DE MOTOS
-|
+|   CRUD
 */
 
-
-Route::resource('bikes', BikeController::class);
+Route::resource('/motos', BikeController::class)
+    ->names([
+        'show'=>'bikes.show',
+        'index'=>'bikes.index',
+        'create'=>'bikes.create',
+        'store'=>'bikes.store',
+        'edit'=>'bikes.edit',
+        'update'=>'bikes.update',
+        'destroy'=>'bikes.destroy'])
+    ->parameters(['motos'=>'bike']);
+/*
+// VARIOS RESURCES CONTROLLER:
+Route::resources([
+    '/bikes'=> BikeController::class,
+    '/shops'=> ShopController::class
+]);
+*/
 
 // FORMULARIO de confirmación para la eliminación de una moto
-Route::get('bikes/{bike}/delete', [BikeController::class , 'delete'])
+Route::get('motos/{bike}/borrar', [BikeController::class , 'delete'])
     ->name('bikes.delete')
     ->middleware('throttle:3,1');
-
-
-
 
 
 /*
@@ -54,8 +74,6 @@ Route::get('bikes/{bike}/delete', [BikeController::class , 'delete'])
 |==========================================================================
 */
 
-
-
 // FIN DE LA ZONA DE PRUEBAS
 
 /*
@@ -63,10 +81,10 @@ Route::get('bikes/{bike}/delete', [BikeController::class , 'delete'])
 |  RUTA DE FALLBACK (debe ser la ultima en el fichero)
 |==========================================================================
 */
-Route::fallback([WelcomeController::class, 'index']);
+Route::fallback(WelcomeController::class);
 
 
-/** TODO: Poner las rutas en chaché
+/** TODO: Poner las rutas en chaché =======================================
  * .../larabikes$ php artisan route:cache
 * Route cache cleared!
 * Routes cached successfully!

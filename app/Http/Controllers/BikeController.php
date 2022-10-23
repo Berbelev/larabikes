@@ -12,6 +12,34 @@ use Illuminate\Support\Facades\Storage;
 
 class BikeController extends Controller{
 
+    /* ===========================================================
+    |   CONSTRUCTOR
+     *///=========================================================
+    /**
+     * MIDDLEWARE EN CONTROLADORES:
+     *
+     *  Pone un middleware a todos los métodos del controlador:
+     *      $this->middleware('firefox');
+     *
+     *  Pone un middleware a todo excepto a index() y show():
+     *      $this->middleware('adult')->except(['index','show']);
+     *
+     *  Pone middleware solamente a destroy()
+     *      $this->middleware('throttle:3,1')->only('destroy');
+     *
+     * REGISTRO MIDDLEWARE EN CONTROLADOR:
+     *  Pone un middleware a todos los métodos de controlador:
+     *      $this->middleware(function(Request $request, $next){
+     *          if($request->has('stop'))
+     *              abort(503, 'La carga se ha interrumido');
+     *           return $next($request);
+     *      });
+     *
+     */
+    //public function __construct(){}
+
+
+
 
     /*
     |===========================================================
