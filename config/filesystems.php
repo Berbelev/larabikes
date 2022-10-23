@@ -28,7 +28,7 @@ return [
     |
     */
     // ruta por defecto para las fotos de las motos
-    'bikesImageDir'=>'images/bikes/',
+    'bikesImageDir'=>'/images/bikes',
 
     'disks' => [
 

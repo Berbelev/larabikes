@@ -55,21 +55,16 @@
                 <label for="inputMatricula" class="col-sm-2 form-label">Matricula</label>
                 <input name="matricula" type="text" class="up form-control"
                     id="inputMatricula" maxlength="7" value="{{$bike->matricula}}">
-
-                <label for="confirmMatricula" class="col-sm-2 form-label">Repetir</label>
-                <input name="matricula_confirmation" type="text" class="up form-control"
-                     id="confirmMatricula" maxlength="7"
-                     value="{{old('matricula_confirmation')}}">
             </div>
 
         </div>
         <script>
             inputMatricula.disabled = !chkMatriculada.checked;
-            confirmMatricula.disabled = !chkMatriculada.checked;
+
 
             chkMatriculada.onchange = function(){
                 inputMatricula.disabled = !chkMatriculada.checked;
-                confirmMatricula.disabled = !chkMatriculada.checked;
+
             }
         </script>
 

@@ -94,7 +94,7 @@ class BikeController extends Controller{
 
             // _3.a_sube la imagen al directorio indicado en el fichero config
             $ruta=$request->file('imagen')->store(config('filesystems.bikesImageDir'));
-
+            ;
             // _3.b_asignar a la imagen el nombre del fichero para ser guadado en la BDD
             $datos['imagen']= pathinfo($ruta, PATHINFO_BASENAME);
         }
@@ -181,24 +181,41 @@ class BikeController extends Controller{
         // SI llega una nueva imágen...
         if($request->hasFile('imagen')){
             // ... SI IMAGEN,
-                // ... marcamos la imagen antigua para ser borrada el update va bien...
+            if($bike->imagen){
+                // ... marcamos la imagen antigua para ser borrada ... si el update va bien...
+                $aBorrar = config('filesystems.bikesImageDir').'/'.$bike->imagen;
 
+            }
             // sube la imagen al directorio indicado en el fichero de confi
+            $imagenNueva= $request->file('imagen')->store(config('filesystems.bikesImageDir'));
+
             // nos quedamos solo con el nombre del fichero para añadirlo a la BDD
+            $datos['imagen']= pathinfo($imagenNueva, PATHINFO_BASENAME);
         }
+
         // SI el caso es que nos piden eliminar la imágen....
+        if($request->filled('eliminarimagen') && $bike->imagen){
             // poner campo imagen a NULL
+            $datos['imagen']=NULL;
             // recuperar el directorio para la imagen aBorrar
+            $aBorrar= config('filesystems.bikesImageDir').'/'.$bike->imagen;
+        }
 
-        // SI todo va bien al actualizar
+        // SI todo va BIEN al actualizar
+        if($bike->update($datos)){
+
             //...y SI la variable aBorrar tiene valor...
-                // Borra la foto antigua
-        // SIno , si falla algo....
+            if(isset($aBorrar))
+                // Borra la foto antigua a través de la Facada Storage
+                Storage::delete($aBorrar);
+
+        // SIno , si FALLA algo....
+        }else{
             // ...y SI la variable imgenNueva tiene valor
+            if(isset($imagenNueva))
                 // Borra la imagen nueva
-
-
-
+                Storage::delete($imagenNueva);
+        }
 
         // encola las cookies
         Cookie::queue('lastUpdateID', $bike->id,0);

@@ -10,6 +10,7 @@ Route::get('/bikes/editlast', [BikeController::class, 'editLast'])
         ->name('bikes.editlast');
 
 // formulario para la busqueda de motos
+//.FIXME:2 ¿deben de ir los parametros opcionales por la query string?
 Route::get('/bikes/search/{marca?}/{modelo?}',[BikeController::class, 'search'])
         ->name('bikes.search');
 /*
@@ -40,7 +41,8 @@ Route::resource('bikes', BikeController::class);
 
 // FORMULARIO de confirmación para la eliminación de una moto
 Route::get('bikes/{bike}/delete', [BikeController::class , 'delete'])
-    ->name('bikes.delete');
+    ->name('bikes.delete')
+    ->middleware('throttle:3,1');
 
 
 
