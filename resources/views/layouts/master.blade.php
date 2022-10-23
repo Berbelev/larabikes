@@ -59,6 +59,10 @@
                      href="{{route('bikes.create')}}">Nueva Moto</a>
                 </li>
                 @endauth
+                <li class="nav-item mr-2">
+                    <a class="nav-link {{$pagina=='contacto' ? 'active' : ''}}"
+                     href="{{route('contacto')}}">Contacto</a>
+               </li>
             </ul>
         </nav>
         @show
@@ -120,7 +124,7 @@
         @section('pie')
         <footer class="page-footer font-small p-4 bg-light">
             <p>Aplicación creada por <b>{{$autor}}</b> como ejemplo de clase.
-                Desarrollada haciendo <i class="fas fa-user-cog    "></i> de <b>Laravel</b> y <b>Bootstrap</b>.
+                Desarrollada haciendo uso de <b>Laravel</b> y <b>Bootstrap</b>.
             </p>
         </footer>
         @show

@@ -5,6 +5,7 @@ use Illuminate\Http\Request;
 
 use App\Http\Controllers\ShopController;
 use App\Http\Controllers\BikeController;   // include BikeController
+use App\Http\Controllers\ContactoController;
 use App\Http\Controllers\WelcomeController;
 
 
@@ -16,18 +17,30 @@ use App\Http\Controllers\WelcomeController;
 | Here is where you can register web routes for your application. These
 | routes are loaded by the RouteServiceProvider within a group which
 | contains the "web" middleware group. Now create something great!
-|
+*/
+
+/*==========================================================================
+| WelcomeControler Web Routes
+|==========================================================================
 | (Portada)
 |   Single action Controler __invoke()
 */
 
 Route::get('/', WelcomeController::class)->name('portada');
 
-// ATAJO PARA EDITAR LA ÚLTIMA MOTO CREADA (para el ejemplo de cookies)
+
+
+/*==========================================================================
+| BikeControler Web Routes
+|==========================================================================
+|   CRUD
+*/
+
+// ATAJO para EDITAR la ÚLTIMA moto creada(para el ejemplo de cookies)
 Route::get('/bikes/editlast', [BikeController::class, 'editLast'])
         ->name('bikes.editlast');
 
-// FORMULARIO PARA BUSQUEDA DE MOTOS
+// FORMULARIO para BUSQUEDA de motos
 // buscar motos por marca(obligatorio) y modelo (opcional)
 Route::match(['GET','POST'], '/motos/buscar',
                             [BikeController::class, 'search'])
@@ -36,12 +49,6 @@ Route::match(['GET','POST'], '/motos/buscar',
 //FIXME:2 mostrar la query string de forma amigable
 Route::get('/bikes/search/{marca?}/{modelo?}',[BikeController::class, 'search'])
         ->name('bikes.search');
-*/
-
-/*==========================================================================
-| Web Routes de BikeController
-|==========================================================================
-|   CRUD
 */
 
 Route::resource('/motos', BikeController::class)
@@ -62,11 +69,25 @@ Route::resources([
 ]);
 */
 
-// FORMULARIO de confirmación para la eliminación de una moto
+// FORMULARIO de CONFIRMACIÓN para la ELIMINACIÓN de una moto
 Route::get('motos/{bike}/borrar', [BikeController::class , 'delete'])
     ->name('bikes.delete')
     ->middleware('throttle:3,1');
 
+
+/*==========================================================================
+| ContactoController Web Routes
+|==========================================================================
+|   index() muestra formulario
+|   send() recibe datos y envía mail
+*/
+// RUTA PRA EL FORUMUARIO DE CONTACTO
+Route::get('/contacto',[ContactoController::class, 'index'])
+->name('contacto');
+
+// RUTA PARA EL ENVÍO DEL EMAIL DE CONTACTO
+Route::post('/contacto',[ContactoController::class, 'send'])
+->name('contacto.mail');
 
 /*
 |==========================================================================
