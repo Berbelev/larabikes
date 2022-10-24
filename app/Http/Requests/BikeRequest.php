@@ -19,6 +19,14 @@ class BikeRequest extends FormRequest{
      * Get the validation rules that apply to the request.
      *
      * @return array
+     *
+     *  REGLAS PERSONALIZADAS:
+     *  'marca'       => ['required','max:255', new \App\Rules\Mayusculas()],
+     *  'modelo'      => ['required','max:255', function($name, $value, $fail){
+     *      if($value != strtolower($value))
+     *          $fail("El campo $name debe estar en minúsculas");
+     *  }],
+     *
      */
     public function rules()    {
         return [
@@ -33,14 +41,33 @@ class BikeRequest extends FormRequest{
                               unique:bikes|
                               confirmed',
             'color'       => 'nullable|
-                              regex:/^#[\dA-F]{6}$/i'/*,*/
-            /*, TODO:implementar ficheros*/
-            /*'imagen'      => 'sometimes|
+                              regex:/^#[\dA-F]{6}$/i',
+            'imagen'      => 'sometimes|
                               file|
                               image|
                               mimes:jpg,png,gif,webp|
                               max:2048'
-            */
+
+
+        ];
+    }
+
+    /**
+     * Return the messages
+     */
+    public function messages(){
+        return [
+            'precio.numeric'=>'El precio debe ser un número.',
+            'precio.min'=>'El precio debe ser mayor o igual a cero.',
+            'kms.numeric'=>'Los kilómetros deben ser un número.',
+            'Kms.min'=>'Los kilometros deben ser 0 o más.',
+            'matricula.required'=>'La matrícula es obligatoria si la moto está matriculada.',
+            'matricula.unique'=>'Ya existe una moto con la misma matrícula.',
+            'matricula.regex'=>'La matrícula debe contener cuatro dígitos y tres letras.',
+            'matricula.confirmed'=>'La confirmación de matrícula no coincide',
+            'color.regex'=>'El color debe estar en formato RGB HEX comenzando por #.',
+            'imagen.image'=>'El fichero debe ser una imagen',
+            'imagen.mines'=>'La imagen debe ser de tipo jpg, png, gif o webp.',
 
         ];
     }

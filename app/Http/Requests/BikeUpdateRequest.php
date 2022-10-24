@@ -20,10 +20,6 @@ class BikeUpdateRequest extends BikeRequest{
          $id = $this->bike->id;
 
 
-
-
-
-
         //retorna la rega de la matrícula modificada y las regas del padre.
         return [
             'matricula'=>"required_if:matriculada, 1|
