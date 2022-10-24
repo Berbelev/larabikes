@@ -21,7 +21,7 @@
             <p class="cursiva">De {{$mensaje->nombre}}
                 <a href="mailto:{{$mensaje->email}}">&lt;{{$mensaje->email}}&gt;</a>
             </p>
-            // TODO:MAIL mejorar la presentación del cuerpo del mensaje
+
             <p>{{$mensaje->mensaje}}</p>
         </main>
         <footer class="page-footer font-small p-4 bg-light">

@@ -36,8 +36,8 @@
                        id="inputMensaje"  maxlength="2048" required >{{old('mensaje')}}</textarea>
             </div>
             <div class="form-group row">
-                <label for="inputFichero" class="col-sm-2 col-form-label">fichero (pdf): </label>
-                <input name="fichero" type="file" class="up form-control-file"
+                <label for="inputFichero" class="form-label">Fichero (pdf): </label>
+                <input name="fichero" type="file" class="form-control-file"
                        id="inputFichero"  accept="application/pdf">
             </div>
 
