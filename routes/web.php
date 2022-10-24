@@ -7,6 +7,13 @@ use App\Http\Controllers\ShopController;
 use App\Http\Controllers\BikeController;   // include BikeController
 use App\Http\Controllers\ContactoController;
 use App\Http\Controllers\WelcomeController;
+use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\ConfirmPasswordController;
+use App\Http\Controllers\Auth\ForgotPasswordController;
+use App\Http\Controllers\Auth\ResetPasswordController;
+use App\Http\Controllers\Auth\RegisterController;
+
+use Illuminate\Support\Facades\Auth;
 
 
 /*
@@ -18,6 +25,9 @@ use App\Http\Controllers\WelcomeController;
 | routes are loaded by the RouteServiceProvider within a group which
 | contains the "web" middleware group. Now create something great!
 */
+Auth::routes();
+
+Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
 /*==========================================================================
 | WelcomeControler Web Routes
@@ -89,6 +99,7 @@ Route::get('/contacto',[ContactoController::class, 'index'])
 Route::post('/contacto',[ContactoController::class, 'send'])
 ->name('contacto.mail');
 
+
 /*
 |==========================================================================
 |  ZONA PARA PRUEBAS
@@ -112,3 +123,5 @@ Route::fallback(WelcomeController::class);
 *  .../larabikes$ php artisan rout:clear
 * Route cache cleared!
  */
+
+

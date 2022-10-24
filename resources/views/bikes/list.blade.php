@@ -8,11 +8,16 @@
     <div class="row">
         <!-- PAGINACIÓN-->
         <div class="col-6 text-start">{{$bikes->links()}}</div>
-        <!-- BOTON nueva moto-->
-        <div class="col-6 text-end">
-            <p>Nueva moto <a href="{{route('bikes.create')}}"
-                class="btn btn-success ml-2">+</a></p>
-        </div>
+
+
+        @auth
+            <!-- BOTON nueva moto-->
+            <div class="col-6 text-end">
+                <p>Nueva moto <a href="{{route('bikes.create')}}"
+                    class="btn btn-success ml-2">+</a></p>
+            </div>
+        @endauth
+
     </div>
     <!------------------------------------------------------------------->
 
@@ -77,6 +82,8 @@
                         <img height="20" width="20" alt="Ver detalles" title="Ver detalles"
                              src="{{asset('imagenes/icons/show.png')}}">
                     </a>
+
+                    @auth
                     <a href="{{route('bikes.edit',$bike->id)}}">
                         <img height="20" width="20" alt="Modificar" title="Modificar"
                              src="{{asset('imagenes/icons/update.png')}}">
@@ -85,6 +92,7 @@
                         <img height="20" width="20" alt="Borrar" title="Borrar"
                              src="{{asset('imagenes/icons/delete.png')}}">
                     </a>
+                    @endauth
                 </td>
             </tr>
 

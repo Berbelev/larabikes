@@ -3,19 +3,95 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-sacale=1">
+
         <meta name="description" content="Ejemplo CRUD con laravel - Larabikes">
+
+            <!-- CSRF Token -->
+            <meta name="csrf-token" content="{{ csrf_token() }}">
+
+
         <!-- yield mostrará el contenido de la sección titulo que se especificará en la vista hija-->
         <title>{{config('app.name')}} - @yield('titulo')</title>
 
         <!-- CSS para Bootstrap-->
-        <link rel="stylesheet" type="text/css" href="{{asset('css/bootstrap.min.css')}}">
         <script src="{{ asset('js/bootstrap.min.js')}}" defer></script>
+        <!-- Styles -->
+        <link rel="stylesheet" type="text/css" href="{{asset('css/bootstrap.min.css')}}">
+
+        <!-- Fonts -->
+        <link rel="dns-prefetch" href="//fonts.gstatic.com">
+        <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet">
+
 
         <!-- FAVICON-->
         <link rel="shortcut icon" href="{{config('app.favicon')}}" type="image/png">
     </head>
     <body class="container p-3">
+        <div id="app">
+            <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
+                <div class="container">
+                    <figure>
+                        <a class="navbar-brand"
+                        href="{{route('portada')}}">
+                            <img id="inicio" alt="logo larabaikes"
+                                src="{{asset(config('app.favicon'))}}"
+                                width="100">
+                            {{ config('app.name', 'Laravel') }}
+                        </a>
+                    </figure>
 
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                            aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+
+                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                        <!-- Left Side Of Navbar -->
+                        <ul class="navbar-nav me-auto">
+
+                        </ul>
+
+                        <!-- Right Side Of Navbar -->
+                        <ul class="navbar-nav ms-auto">
+                            <!-- Authentication Links -->
+                            @guest
+                                @if (Route::has('login'))
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="{{ route('login') }}">{{ __('Login') }}</a>
+                                    </li>
+                                @endif
+
+                                @if (Route::has('register'))
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="{{ route('register') }}">{{ __('Register') }}</a>
+                                    </li>
+                                @endif
+                            @else
+                            <li class="nav-item">
+                                <div class="row">
+                                    <div class="col">
+                                        <a id="navbarDropdown" class="nav-link" href="{{route('home')}}" role="button">
+                                            {{ Auth::user()->name }} ({{ Auth::user()->email }})
+                                        </a>
+                                    </div>
+                                    <div class="col">
+                                        <a  class="nav-link"  href="{{ route('logout') }}"
+                                        onclick="event.preventDefault();
+                                                        document.getElementById('logout-form').submit();">
+                                            {{ __('Logout') }}
+                                        </a>
+                                    </div>
+                                    <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                                            @csrf
+                                        </form>
+                                    </div>
+                                </li>
+                            @endguest
+                        </ul>
+                    </div>
+                </div>
+            </nav>
 
 
 
@@ -42,7 +118,7 @@
                         href="{{route('portada')}}">
                             <img id="inicio" alt="logo larabaikes"
                                 src="{{asset(config('app.favicon'))}}"
-                                width="80">
+                                width="70">
                         </a>
                     </figure>
                 </li>
@@ -52,8 +128,21 @@
                     href="{{route('bikes.index')}}">Garaje</a>
                 </li>
 
+                @guest
+                <li class="nav-item">
+                    <a class="nav-link {{$pagina=='register'?'active':''}}"
+                     href="{{route('register')}}">Registro</a>
+                </li>
+                @endguest
+
+
                 <!--Muestra nueva moto solo para usuarios ifentificados-->
                 @auth
+                <li class="nav-item">
+                    <a class="nav-link {{$pagina=='home'?'active':''}}"
+                     href="{{route('home')}}">Mis Motos</a>
+                </li>
+
                 <li class="nav-item">
                     <a class="nav-link {{$pagina=='bikes.create'?'active':''}}"
                      href="{{route('bikes.create')}}">Nueva Moto</a>

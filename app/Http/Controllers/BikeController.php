@@ -36,7 +36,12 @@ class BikeController extends Controller{
      *      });
      *
      */
-    //public function __construct(){}
+    public function __construct(){
+
+        // Pone un middleware a todo excepto a index() y show():
+        $this->middleware('auth')->except(['index','show','search']);
+
+    }
 
 
 
