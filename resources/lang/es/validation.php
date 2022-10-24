@@ -114,7 +114,7 @@ return [
     'starts_with' => 'El campo :attribute must start with one of the following: :values.',
     'string' => 'El campo :attribute debe ser a string.',
     'timezone' => 'El campo :attribute debe ser a valid zone.',
-    'unique' => 'El campo :attribute has already been taken.',
+    'unique' => 'El campo :attribute ya ha sido elegido.',
     'uploaded' => 'El campo :attribute failed to upload.',
     'url' => 'El campo :attribute format is invalid.',
     'uuid' => 'El campo :attribute debe ser a valid UUID.',
