@@ -38,8 +38,17 @@ class BikeController extends Controller{
      */
     public function __construct(){
 
-        // Pone un middleware a todo excepto a index() y show():
-        $this->middleware('auth')->except(['index','show','search']);
+        /**
+        *   Para las operaciones con motos
+        *   el usuario debe estar verificado
+        *   excepto para :index(), show() y search()
+        */
+        $this->middleware('verified')->except(['index','show','search']);
+
+        /**
+         * El método para eliminar una moto requiere de confirmación de la clave
+         */
+        $this->middleware('password.confirm')->only('destroy');
 
     }
 

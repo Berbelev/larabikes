@@ -1,4 +1,5 @@
 @extends('layouts.master')
+@section('titulo', 'Verificación de e-mail')
 
 @section('contenido')
 <div class="container">

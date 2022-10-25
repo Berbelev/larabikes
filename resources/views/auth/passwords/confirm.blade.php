@@ -1,6 +1,7 @@
 @extends('layouts.master')
+@section('titulo', 'Confirmación de Password')
 
-@section('content')
+@section('contenido')
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-md-8">

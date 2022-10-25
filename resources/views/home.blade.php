@@ -8,6 +8,26 @@
         <a class="stretched-link">{{route('login')}}</a>
     </div>
 @endif
+
+@if (session('resent'))
+<div class="alert alert-success" role="alert">
+    {{ __('Hemos enviado un nuevo link de verificación a tu correo electrónico.') }}
+</div>
+@endif
+
+<!--Si el usuario no ha verificado su email-->
+@if(empty(Auth::user()->email_verified_at))
+    <!--Alertarle de que realice la operación-->
+    <div class="alert alert-danger" role="alert">
+        {{ __('Antes de continuar, por favor, confirme su correo electrónico con el enlace de verificación que le fue enviado. Si no ha recibido el correo electrónco') }}
+        <form class="d-inline" method="POST" action="{{ route('verification.resend') }}">
+            @csrf
+            <button type="submit" class="btn btn-link p-0 m-0 align-baseline">{{ __('haga clic aquí para solicitar otro.') }}</button>.
+        </form>
+    </div>
+@endif
+
+
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="card">

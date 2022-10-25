@@ -5,6 +5,9 @@ namespace App\Providers;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Gate;
 
+use Illuminate\Auth\Notifications\VerifyEmail;
+use Illuminate\Notifications\Messages\MailMessage;
+
 class AuthServiceProvider extends ServiceProvider
 {
     /**
@@ -25,6 +28,14 @@ class AuthServiceProvider extends ServiceProvider
     {
         $this->registerPolicies();
 
-        //
+        //traducción del email de validación
+        VerifyEmail::toMailUsing(function($notifiable, $url){
+            return (new MailMessage)
+                ->subject('Verificar email')
+                ->greeting('Hola')
+                ->salutation('Un saludo')
+                ->line('Haz cliec en la siguiete línea para verificar tu email.')
+                ->action('Verificar email', $url);
+        });
     }
 }
