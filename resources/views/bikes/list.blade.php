@@ -84,14 +84,19 @@
                     </a>
 
                     @auth
-                    <a href="{{route('bikes.edit',$bike->id)}}">
-                        <img height="20" width="20" alt="Modificar" title="Modificar"
-                             src="{{asset('imagenes/icons/update.png')}}">
-                    </a>
-                    <a href="{{route('bikes.delete',$bike->id)}}">
-                        <img height="20" width="20" alt="Borrar" title="Borrar"
-                             src="{{asset('imagenes/icons/delete.png')}}">
-                    </a>
+                        @if(Auth::user()->can('update',$bike))
+                            <a href="{{route('bikes.edit',$bike->id)}}">
+                                <img height="20" width="20" alt="Modificar" title="Modificar"
+                                    src="{{asset('imagenes/icons/update.png')}}">
+                            </a>
+                        @endif
+
+                        @if(Auth::user()->can('delete', $bike))
+                            <a href="{{route('bikes.delete',$bike->id)}}">
+                                <img height="20" width="20" alt="Borrar" title="Borrar"
+                                    src="{{asset('imagenes/icons/delete.png')}}">
+                            </a>
+                        @endif
                     @endauth
                 </td>
             </tr>

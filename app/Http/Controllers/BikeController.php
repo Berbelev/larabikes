@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\BikeDeleteRequest;
 use App\Http\Requests\BikeRequest;
 use App\Http\Requests\BikeUpdateRequest;
 use Illuminate\Http\Request;
@@ -9,6 +10,8 @@ use App\Models\Bike;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Gate;
+
 
 class BikeController extends Controller{
 
@@ -141,6 +144,9 @@ class BikeController extends Controller{
             $datos['imagen']= pathinfo($ruta, PATHINFO_BASENAME);
         }
 
+        // recupera el id del usuario identificado y lo gruada en user_id de la moto
+        $datos['user_id']= $request->user()->id;
+
         // _4_ Creción y guardado de la nueva moto
         $bike = Bike::create($datos);
 
@@ -190,7 +196,11 @@ class BikeController extends Controller{
      * @param  \App\Models\Bike  $bike
      * @return \Illuminate\Http\Response
      */
-    public function edit(Bike $bike)    {
+    public function edit(Request $request, Bike $bike)    {
+
+        // Autorización mediante policy
+        if($request->user()->cant('delete',$bike))
+            abort(401, 'No puedes actualizar esta moto');
 
         // carga la vista con el formulario para modificar la moto
         return view('bikes.update', ['bike'=>$bike]);
@@ -292,10 +302,28 @@ class BikeController extends Controller{
      * ---------------------------------------------------------
      * Muestra el formulario de confirmación
      *
+     * @param \Illuminate\Http\Request\BikeDeleteRequest $request
      * @param  \App\Models\Bike  $bike
      * @return \Illuminate\Http\Response
      */
-    public function delete(Bike $bike)    {
+    public function delete(BikeDeleteRequest $request, Bike $bike)    {
+
+        // Realizamos la autorización mediante Policie en BikeDeleteRequest
+        // FIXME:3_NO FUNCIONA POLICIE EN BIKEDELETEDREQUEST, CONTROLADOR METODO DELETE
+        /**
+          *  Autorización mediante policy, ejemplo:
+          *     if($request->user()->cant('delete',$bike)).
+          *          abort(401, 'No puedes borrar esta moto.');
+          **/
+          if($request->user()->cant('delete',$bike))
+            abort(401, 'No puedes borrar esta moto.');
+         /**
+         * Autorización mediante gate,ejemplo:
+         * Prueba para ver el funcionamiento de la gate.
+         *  if(Gate::denies('borrarMoto',$bike))
+         *      abort(401, 'No puedes borrar una moto que no es tuya');
+         */
+
         //muestra formulario con mensaje de confirmaicón para el borrado de la moto
         // y recupera la moto para mostrar en la vista de blade
         return view('bikes.delete',['bike'=>$bike]);
@@ -310,10 +338,16 @@ class BikeController extends Controller{
      * @return \Illuminate\Http\Response
      */
     public function destroy(Request $request, Bike $bike) {
+        // Realizamos la autorización mediante Policie en BikeDeleteRequest
+        // FIXME:3_NO FUNCIONA POLICIE EN BIKEDELETEDREQUEST, CONTROLADOR METODO DELETE
+        if($request->user()->cant('delete', $bike))
+            abort(401, 'No puedes borrar una moto que no es tuya');
+
 
         // comporbar la validez de la firma de la URL
         if(!$request->hasValidSignature())
             abort(401, 'La firma de la URL no se pudo validar');
+
 
 
         // borra la moto de la base de datos y si tiene imagen...

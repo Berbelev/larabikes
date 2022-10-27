@@ -60,13 +60,17 @@
     </table>
     <div class="text-end my-3">
         <div class="btn-group mx-2">
-            <a class="mx-2" href="{{route('bikes.edit',$bike->id)}}">
-            <img height="40" width="40" src="{{asset('imagenes/icons/update.png')}}"
-            alt="Modificar" title="Modifiar"></a>
+            @can('update', $bike)
+                 <a class="mx-2" href="{{route('bikes.edit',$bike->id)}}">
+                <img height="40" width="40" src="{{asset('imagenes/icons/update.png')}}"
+                alt="Modificar" title="Modifiar"></a>
+            @endcan
 
-            <a class="mx-2" href="{{route('bikes.delete',$bike->id)}}">
-            <img height="40" width="40" src="{{asset('imagenes/icons/delete.png')}}"
-            alt="Borrar" title="Borrar"></a>
+            @can('delete', $bike)
+                <a class="mx-2" href="{{route('bikes.delete',$bike->id)}}">
+                <img height="40" width="40" src="{{asset('imagenes/icons/delete.png')}}"
+                alt="Borrar" title="Borrar"></a>
+            @endcan
         </div>
     </div>
 @endsection

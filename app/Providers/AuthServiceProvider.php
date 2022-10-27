@@ -17,6 +17,7 @@ class AuthServiceProvider extends ServiceProvider
      */
     protected $policies = [
         // 'App\Models\Model' => 'App\Policies\ModelPolicy',
+        'App\Models\Bike' => 'App\Policies\BikePolicy',
     ];
 
     /**
@@ -37,5 +38,13 @@ class AuthServiceProvider extends ServiceProvider
                 ->line('Haz cliec en la siguiete línea para verificar tu email.')
                 ->action('Verificar email', $url);
         });
+
+        /**
+         * GATE para autorizar el borrado de una moto.
+         * Ejemplo solo pra pruebas de gate:
+         *  Gate::define('borrarMoto', function($user, $bike){
+         *       return $user->id == $bike->user_id;
+         * });
+         */
     }
 }

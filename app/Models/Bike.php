@@ -10,6 +10,6 @@ class Bike extends Model{
 
     // Campos a los que se permite hacer asignación masiva desde la request a la BDD
     protected $fillable =['marca','modelo', 'kms', 'precio','imagen',
-                         'matriculada' ,'matricula', 'color'];
+                         'user_id','matriculada' ,'matricula', 'color'];
 }
 
