@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AdminController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 
@@ -95,6 +96,24 @@ Route::delete('/bikes/purge', [BikeController::class,'purge'])
 // RESTAURACIÓN DE LA MOTO
 Route::get('/bikes/{bike}/restore', [BikeController::class,'restore'])
     ->name('bikes.restore');
+
+
+
+/*==========================================================================
+| Grupo de rutas solo para el Administrador
+|==========================================================================
+|   Llevarán el prefijo 'admin'
+*/
+
+Route::prefix('admin')->middleware('auth', 'is_admin')->group(function(){
+
+    // ver las motos eliminadas(/admin/deletedbikes)
+    Route::get('deletedbikes', [AdminController::class,'deletedBikes'])
+        ->name('admin.deleted.bikes');
+
+});
+
+
 
 
 /*==========================================================================

@@ -147,6 +147,12 @@
                     <a class="nav-link {{$pagina=='bikes.create'?'active':''}}"
                      href="{{route('bikes.create')}}">Nueva Moto</a>
                 </li>
+                @if(Auth::user()->hasRole('administrador'))
+                    <li class="nav-item mr-2">
+                        <a class="nav-link {{$pagina=='bikes.deleted.bikes'?'active':''}}"
+                        href="{{route('admin.deleted.bikes')}}">Motos Borradas</a>
+                    </li>
+                @endif
                 @endauth
                 <li class="nav-item mr-2">
                     <a class="nav-link {{$pagina=='contacto' ? 'active' : ''}}"
