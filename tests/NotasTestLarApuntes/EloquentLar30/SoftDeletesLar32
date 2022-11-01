@@ -1,0 +1,111 @@
+    SOFT DELETE ==========================================================================
+        // Resulado:
+        // Si usamos el query builder o Eloquent...
+        // No aparece la moto 48 borrada del usuario 3
+        User::find(3)->bikes;
+
+        // Si realizamos consultas en crudo si aparece la moto borrada
+        DB::select('SELECT marca, deleted_at FROM bikes WHERE user_id =?', [3]);
+
+        // Raw query teniendo en cuanta deletd_at
+        // No aparecería la moto borrada
+        DB::select('SELECT marca, deleted_at FROM bikes WHERE user_id =? AND deleted_at IS NULL', [3]);
+
+    TRASHED ==================================================================================
+    Mostrando los resultados 'borrados'
+
+        withTrashed()
+            -> fuerza que aparezcan los resultados borrados.
+
+                // no aparecen los borrados
+                User::find(3)->bikes()->select('marca', 'deleted_at')->get()
+
+                // aparecen los borrados
+                User::find(3)->bikes()->select('marca', 'deleted_at')->withTrashed()->get()
+
+        MÉTODO ESTÁTICO withTrashed() ========================================================
+
+            Modelo::withTrashed()
+                -> primero recupera y luego buscar
+
+                    Bike::find(48);   // NULL
+
+                    Bike::withTrashed()->find(48);
+                    [!] Aliasing 'Bike' to 'App\Models\Bike' for this Tinker session.
+                    => App\Models\Bike {#3971
+                        id: 48,
+                        marca: "Córdova-Valdivia S. de H.",
+                        modelo: "sint",
+                        kms: 66770,
+                        precio: 17536.94,
+                        matriculada: 1,
+                        imagen: null,
+                        user_id: 3,
+                        matricula: "4444EEE",
+                        color: null,
+                        created_at: "2022-10-28 03:43:47",
+                        updated_at: "2022-11-01 11:12:56",
+                        deleted_at: "2022-11-01 11:12:56",
+                    }
+
+
+
+        EL MÉTODO trashed() ==================================================================
+
+            trashed()
+                -> saber si un elemento ha sido borrado
+
+                    // Recupera las motos del usuario 3 en una collection
+                    User::find(3)->bikes()->select('marca', 'deleted_at')->withTrashed()->get()
+
+                    // está borrada la moto en la posicion 2 de la collection?
+                    User::find(3)->bikes()->withTrashed()->get()->get(2)->trashed(); // false
+
+                    // está borrada la moto en la posicion 6 de la collection?
+                    User::find(3)->bikes()->withTrashed()->get()->get(6)->trashed(); // true
+
+
+        EL MÉTODO onlyTrashed() ==============================================================
+
+            onlyTrashed()
+                -> recupera solo los elementos borrados
+
+                    User::find(3)->bikes()->onlyTrashed()->get();
+
+
+        EL MÉTODO restore() ==================================================================
+
+            restore()
+                -> Restaura los modelos que fueron borrados de forma blanda.
+                -> Tb se puede aplicar sobre un conjunto de resultados.
+                    -> Al hacer esto no se dispararán los eventos asociados.
+
+                        Bike::withTrashed()->find(48)->restore();   // true
+
+        EL MÉTODO forceDelete() ==============================================================
+
+            foreceDelete()
+                -> Elimina definitivamente un elemento al que se le aplicó un borrado blando.
+                -> Elimina el registro de la BDD.
+                -> Se pueden eliminar múltiples elementos de golpe.
+                    -> Si lo aplicamos sobre una colección de entidades.
+
+                        // Recupera la moto 48
+                        $bike = Bike::find(48);
+
+                        // Borra la moto 48 (soft delete)
+                        $bike->delete();
+
+                        // Muestra la moto borrada
+                        Bike::withTrashed()->select('marca', 'modelo')->where(['id'=>48])->get();
+
+                        // Elimina definitivamente la moto 48
+                        $bike->forceDelete();   // true
+
+                        // comprobación : la moto ya no aparece
+                        Bike::withTrashed()->select('marca', 'modelo')->where(['id'=>48])->get();
+
+
+
+
+

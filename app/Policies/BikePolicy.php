@@ -81,9 +81,10 @@ class BikePolicy
      * @param  \App\Models\Bike  $bike
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function restore(User $user, Bike $bike)
-    {
-        //
+    public function restore(User $user, Bike $bike)    {
+        // true si el usuario es el propietaro o tiene uno de los roles admin o todop..
+        return $user->isOwner($bike) ||
+               $user->hasROle(['administrador', 'todopoderoso']);
     }
 
     /**

@@ -7,6 +7,7 @@ use App\Http\Requests\BikeRequest;
 use App\Http\Requests\BikeUpdateRequest;
 use Illuminate\Http\Request;
 use App\Models\Bike;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Storage;
@@ -174,7 +175,8 @@ class BikeController extends Controller{
      * @param  \App\Models\Bike  $bike
      * @return \Illuminate\Http\Response
      */
-    public function show(Bike $bike) {
+    public function show( Bike $bike) {
+
 
         //carga la vista correspondiente
         // y le pasa la moto
@@ -293,7 +295,7 @@ class BikeController extends Controller{
     /*
     |===========================================================
     |   ELIMINAR MOTO
-    |   5.1_ delete() y 5.2_destroy()
+    |   5.1_ delete(), 5.2_destroy(), 5.3_restore(), 5.4_purge()
     |===========================================================
      */
     /** _________________________________________________________
@@ -328,6 +330,7 @@ class BikeController extends Controller{
         // y recupera la moto para mostrar en la vista de blade
         return view('bikes.delete',['bike'=>$bike]);
     }
+
     /** _________________________________________________________
      *
      * destroy()
@@ -349,17 +352,74 @@ class BikeController extends Controller{
 
 
 
-        // borra la moto de la base de datos y si tiene imagen...
-        if($bike->delete() && $bike->imagen)
-            // ... elimina la imagen
-            Storage::delete(config('filesystems.bikesImageDir').'/'.$bike->imagen);
+        // borra la moto (borrado blando)
+        $bike->delete();
+
 
 
         // devuelve al usuario a la vista del listado de motos
         // muestra mensaje de exito de la operación con una variable de sesión flaseada
-        return redirect('bikes')
+        return redirect('home')
             ->with('success', "Moto $bike->marca $bike->modelo eliminada");
     }
+
+    /** _________________________________________________________
+     *
+     * 5.3_restore() RESTAURAR MOTO BORRADA
+     * ---------------------------------------------------------
+     * Restaura una moto borrada con soft delete.
+     * @param  \Illuminate\Http\Request $request
+     * @param  integer $id
+     * @return \Illuminate\Http\Response
+     */
+    public function restore(Request $request, int $id) {
+
+        // recupera la moto borrada
+        $bike = Bike::withTrashed()->findOrFail($id);
+
+        if($request->user()->cant('restore', $bike))
+            throw new AuthorizationException('No tienes permiso');
+
+        // Restaura la moto
+        $bike->restore();
+
+        return back()->with(
+            'success',
+            "Moto $bike->marca $bike->modelo restaurada correctamente."
+        );
+
+    }
+
+    /** _________________________________________________________
+     *
+     * 5.3_purge() ELIMINA DEFINITIVAMENTE DE LA BDD
+     * ---------------------------------------------------------
+     * Elimina la moto  definitivamente.
+     * @param  \Illuminate\Http\Request $request
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function purge(Request $request) {
+
+        // recupera la moto borrada
+        $bike = Bike::withTrashed()->findOrFail($request->input('bike_id'));
+
+        if($request->user()->cant('delete', $bike))
+            throw new AuthorizationException('No tienes permiso');
+
+        // Si se consigue eliminar definitivamente la moto y ésta tiene foto...
+        if($bike->forceDelete() && $bike->imagen)
+            // borra también la foto
+            Storage::delete(config('filesystems.bikesImageDir').'/'.$bike->imagen);
+
+        return back()->with(
+            'success',
+            "Moto $bike->marca $bike->modelo eliminada definitivamente."
+        );
+
+    }
+
+
      /*
     |===========================================================
     |   BUSCAR MOTOS
@@ -397,9 +457,9 @@ class BikeController extends Controller{
         return view('bikes.list',['bikes'=>$bikes, 'marca'=>$marca,'modelo'=>$modelo]);
     }
 
-         /*
+    /*
     |===========================================================
-    |
+    |   EDITAR LA ÚLTIMA MOTO CREADA
     |   7.1_ editLast()
     |===========================================================
      */

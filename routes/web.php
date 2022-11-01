@@ -87,6 +87,15 @@ Route::get('motos/{bike}/borrar', [BikeController::class , 'delete'])
     ->name('bikes.delete')
     ->middleware('throttle:3,1');
 
+// ELIMINACIÓN DEFINITIVA DE LA MOTO
+// va por DELETE
+Route::delete('/bikes/purge', [BikeController::class,'purge'])
+    ->name('bikes.purge');
+
+// RESTAURACIÓN DE LA MOTO
+Route::get('/bikes/{bike}/restore', [BikeController::class,'restore'])
+    ->name('bikes.restore');
+
 
 /*==========================================================================
 | ContactoController Web Routes

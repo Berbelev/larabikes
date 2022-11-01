@@ -24,10 +24,13 @@ class HomeController extends Controller
      */
     public function index(Request $request){
 
-        // recuperar las motos del usuario
+        // recuperar las motos NO borradas del usuario
         $bikes = $request->user()->bikes()
                 ->paginate(config('pagination.bikes', 10));
 
-        return view('home', ['bikes'=>$bikes]);
+        // recuperar las motos borradas del usuario
+        $deleteBikes = $request->user()->bikes()->onlyTrashed()->get();
+
+        return view('home', ['bikes'=>$bikes, 'deleteBikes'=>$deleteBikes]);
     }
 }
