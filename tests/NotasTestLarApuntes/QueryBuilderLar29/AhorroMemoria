@@ -1,0 +1,51 @@
+LAR 29 QUIERY BUILDER ========================================================================
+==============================================================================================
+Recuperando conjuntos de resultados para ahorrar memoria
+
+    AHORRANDO MEMORIA ========================================================================
+        chunk()
+            -> recupera subconjuntos mas pequeños y ahorra memoria.
+            -> Realiza multiples consultas con la BDD, tantas como grupos haya.
+            -> Las operaciones a realizar sobres los grupos de resultados se indican a modo de clausura.
+            -> Se pueden detener el procesamiento de los conjuntos de resultados..
+                -> si en la clausuar retornamos false en algun momento.
+
+                    // recupera motos de 5 en 5 y realiza la operación
+                    // definida en la clausuara para cada grupo
+                    DB::table('bikes')->orderBy('marca', 'ASC')
+                        ->chunk(5, function($bikes){
+
+                            foreach($bikes as $bike){
+                                echo "$bike->marca $bike->modelo \n";
+                            }
+
+                            echo "----------------------------------\n";
+                            echo "------------ FIN GRUPO -----------\n";
+                            echo "----------------------------------\n";
+                        });
+
+            -> Hay que tener cuidado si actualizamos o borramos registros dentro del grupo.
+                -> (si indicamos operaciones de este tipo en la clausura)
+
+                -> Los cambios pueden provocar que los grupos recuperen resultados incorrectos.
+                    -> Debido a los registros que "cambian de grupo"
+                        ->Puede aparecer varias veces el mismo.
+                        ->Puede no aparecer un registro concreto.
+
+
+        chunkById()
+            -> Ordena los resultados por la clave primaria.
+            -> Evita usar orderBy()
+
+                //ejemplo:
+                DB::table('bikes')->chunkById(5, function($bikes){
+
+                            foreach($bikes as $bike){
+                                echo "$bike->marca $bike->modelo \n";
+                            }
+
+                            echo "----------------------------------\n";
+                            echo "------------ FIN GRUPO -----------\n";
+                            echo "----------------------------------\n";
+                        });
+

@@ -1,0 +1,240 @@
+LAR 29 QUIERY BUILDER ========================================================================
+==============================================================================================
+
+SELECT =======================================================================================
+    RECUPERAR TODAS LAS MOTOS MOTOS ==========================================================
+        tables()
+            -> método estático de la fachada DB .
+            -> recupera todas las filas de la tabla .
+            -> retorna instancia de Illuminate\Database\Query\Builder
+                ->permite concatenar mas restricciones dobre él.
+
+
+                    $bikes = DB::table('bikes')->get();
+
+
+        get()
+            -> finaliza la consulta y obtiene los resultado a modo de colección.
+            -> Retorna una isntancia de Illuminate\Suport\Colecction
+                -> donde cada elemento de la colección es una instancia de la clase stdClass.
+
+                    Demostración:
+
+                    get_class(DB:table('bikes'));
+                        => "Illuminate\Database\Query\Builder"
+
+                    get_class(DB::table('bikes')->get());
+                        => "Illuminate\Support\Collection"
+
+                    get_class(DB::table('bikes')->get()->get(0));
+                        => "stdClass"
+
+    HIDRATANDO LOS RESULTADOS ================================================================
+        hydrate()
+            -> Hidrata los resultados convirtiendolos en una Eloquent Collection del tipo que indiquemos.
+
+                // crea instancia del modelo
+                $bikes = new App\Models\Bike;
+
+                // La hidrata con los resultados (el método deber recibir un array)
+                $bikes->hydrate(DB::table('bikes')->get()->toArray());
+
+
+    MÉTODOS pluck() y value() ================================================================
+
+        first()
+            -> Recupera una sola fila
+            -> Retorna un objeto stdClass
+
+                // recupera la primera moto Derbi
+                $bike = DB::table('bikes')->where('marca', 'Derbi')->first();
+
+        value()
+            -> Recupera solo el valor indicado en la fila
+
+            // recupera la primera moto Derbi (solamente el modelo)
+            $bike = DB::table('bikes')->where('marca', 'Derbi')->value('modelo');
+
+    MÉTODOS pluck() ==========================================================================
+
+    pluck()
+        -> Recupera todos los valores de una columna
+        -> Los mete directamente en una colección
+
+            // recupera todas las matrículas
+            $matriculas = DB::table('bikes')->pluck('matricula');
+
+    Se puede vincular una clave a los registro mediante el segundo parámetro.
+    Retorna array asociactivo con pares de valor y clave(en ese orden)
+
+        // recuperar usuaros y mails en pares de valor => clave
+        $emails = DB::table('users')->pluck('email', 'name');
+
+
+    CONSULTAS DE TOTALES (MIN, MAX, SUM, COUNT y AVG) ========================================
+        -> Retornan un único valor
+
+            // precio promedio de las motos
+            $prom=DB::table('bikes')->avg('precio');
+
+            // número total de motos
+            $motos= DB::table('bikes')->count();
+
+            // primer usuario en darse de alta
+            DB::table('users')
+                ->where('created_at', '=', DB::table('users')->min('created_at'))
+                ->get();
+
+
+    MÉTODOS exists() y doesntExist() =========================================================
+
+        count()
+            -> podemos usuarlo para determinar si un registro existe
+            -> comparandolo con 0
+
+                // comprobar si existe el usuario admin (forma larga)
+                DB::table('users')->where('name', 'admin')->count() > 0;
+
+        exists()
+            // comporbar si existe el usuario admin
+            DB::table('users')->where('name', 'admin')->exists();
+
+        doesntExist()
+            // comprobar si no hay ninguan moto honda
+            DB::table('bikes')->where('marca', 'Honda')->doesntExist();
+
+
+    MÉTODO select() ==========================================================================
+        select()
+            -> recupera solo los campos indicados
+            -> permite incluir alias de campo
+
+                // recuperar marca, modelo y kms (con alias) de las motos
+                $bikes =DB::table('bikes')
+                    ->select('marca', 'modelo', 'kms as kilometros')
+                    ->get();
+
+
+    MÉTODO distinct() ========================================================================
+        distinct()
+            -> selecciona resultados sin repeticiones
+
+                $marcas = DB::table('bikes')->select('marca')->distinct()->get();
+
+        groupBy()
+            -> selecciona resultados sin repeticiones (con orden ASC por defecto)
+
+                $marcas = DB::table('bikes')->select('marca')->groupBy('marca')->get();
+
+
+
+    CONSULTA A TROZOS ========================================================================
+        addSelect()
+            -> añade campos al select
+
+                // preparando a trozos
+
+                $qb = DB::table('bikes');                  // selecciona todas las motos
+                $qb = $qb->select('marca');                // selecciona marca
+                $qb = $qb->addSelect('modelo', 'kms');     // selecciona modelo y kms
+                $qb = $qb->where('kms', '>', '100000');    // más de 100000 kms
+
+                $resultado = $qb->get();                   // recupera
+                $resultado;
+
+
+
+    MÉTODOS WHERE https://laravel.com/docs/8.x/queris#where-clauses ==========================
+
+        ejemplos WHERE:
+
+            // Motos con precio superior a 20.000
+            DB::table('bikes')
+                ->select('marca', 'modelo', 'precio')
+                ->where('precio', '>', 20000)
+                ->get();
+
+            // Motos con precio superior a 30.000
+            // o con un número de kms entre 1.000 y 5.000
+            DB::table('bikes')
+                ->select('marca', 'modelo', 'precio', 'kms')
+                ->where('precio', '>', 30000)
+                ->orWhereBeteween('kms', [1000,5000])
+                ->get();
+
+            // Motos que tienen imagen
+            DB::table('bikes')
+                ->select('marca', 'modelo', 'imagen')
+                ->whereNotNull('imagen')
+                ->get();
+
+    EL MÉTODO orderBy() ======================================================================
+        orderBy()->establece el orden
+
+            // motos ordenadas por marca descendente
+            DB::table('bikes')
+                ->orderBy('marca', 'DESC')
+                ->get();
+
+            // motos ordenadas por marca, modelo y matrícula
+            DB::table('bikes')
+                ->select('marca', 'modelo', 'matricula')
+                ->orderBy('marca', 'ASC')
+                ->orderBy('modelo', 'ASC')
+                ->orderBy('matricula', 'ASC')
+                ->get();
+
+
+
+    MÉTODOS latest() y oldest() ==============================================================
+        ->ordenan por la columna created_at
+
+            // la primera moto que se guardó
+            DB::table('bikes')
+                ->oldest()
+                ->first();
+
+            // El usuario mas reciente
+            DB::table('users')
+                ->latest()
+                ->first();
+
+
+
+    MÉTODO randomOrder() =====================================================================
+        -> ordena aleatoriamente
+
+            // a este usuario le ha tocado un premio
+            DB::table('users')
+                ->inRandomOrder()
+                ->first();
+
+
+    EL MÉTODO limit() ========================================================================
+        limit()
+            -> máximo de registro a recuperar
+
+                // las cinco últimas fotos
+                DB::table('bikes')
+                    ->whereNotNull('imagen')
+                    ->latest()
+                    ->limit(5)
+                    ->pluck('imagen');              // mete las imagenes en una colección
+
+                TODO: LAR.hacer que en la portada aprezcan las fotos de las motos más recientes.
+
+
+    MÉTODOS skip() y take()
+        -> combinación de las calusulas LIMIT y OFFSET de SQL.
+
+            // LAS CINCO MOTOS DE LA TERCERA PÁGINA (limit 5 offset 10)
+            DB::table('bikes')
+                ->skip(10)
+                ->take(5)
+                ->get();
+
+
+
+
+
+

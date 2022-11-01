@@ -1,0 +1,133 @@
+LAR 30 ELOQUENT ==============================================================================
+==============================================================================================
+
+    ELOQUENT COLLECTIONS =====================================================================
+    Cuando usamos Eloquent y trabajamos con modelos:
+        -> Los resultados tienen forma de Eloquent Collection
+            -> Contendrá las entidades del tipo adecuado.
+
+        -> Útil para hacer operaciones como:
+            -> uniones
+            -> intersecciones
+            -> diferencias
+            -> ... http://laravel.com/docs/8.x/eloquent-collection#available-methods
+
+                -> Ejemplo tipos =============================================================
+
+                    Shop::where('poblacion', 'Sabadell')->get();
+                    => Illuminate\Database\Eloquent\Collection {#4333  // <<====  tipo Illuminate\Database\Eloquent\Collection
+                        all: [
+                        App\Models\Shop {#4612          // <<===== tipo App\Models\Shop
+                            id: 1,
+                            nombre: "Motos Can Rull",
+                            poblacion: "Sabadell",
+                            telefono: "937456123",
+                            created_at: "2022-10-31 20:25:08",
+                            updated_at: "2022-10-31 23:22:53",
+                        },
+                        ],
+                    }
+
+    MÉTODOS ==================================================================================
+
+        contains()
+            -> determina si un modelo está en una colección.
+            -> Este método acepta un modelo o una clave primaria.
+
+                $motos = User::find(2)->bikes;   // moto del usuario 2
+                $moto = Bike::find(10);          // moto 10
+
+                // comporbamos si la moto 10 está entre las motos del usuario
+                $motos->contains($moto);
+
+                // o bien
+                $motos->contains(10);
+
+
+        except()
+            -> retorna todos los modelos excepto los indicados.
+            -> recibe como parámetro las claves primarias de los que no queramos recuperar.
+
+                Bike::all()->except([1,2]);
+
+
+        find()
+            -> Recupera un modelo de una colección a partir de su id.
+            -> Se puede indicar un array de ids.
+
+                // recupera todas las motos
+                $motos = Bike::all();
+
+                // de la colección con todas las motos, recupera la 2 y la 3
+                $varias = $motos->find([2,3]);
+
+
+        modelKeys()
+            -> Retorna (en un array )las claves primarias de todos los elementos en la colección.
+
+                // motos kawasaki
+                $kawas = Bike::where('marca', 'kawasaki')->get();
+
+                $kawas->modelKeys();    // [26,30]
+
+
+        only()
+            -> retorna los modelos de la colección que tienen las claves primarias dadas.
+
+                // recupera todas las motos
+                $motos = Bike::all();
+
+                // de la colección con todas las motos, recupera la 2 y la 3
+                $varias = $motos->only([2,3]);
+
+        diff()
+            -> diferencia de conjuntos.
+
+                // motos del usuari 5
+                $motos = User::find(5)->bikes;
+
+                // motos kawasaki
+                $kawas = Bike::where('marca', 'kawasaki')->get();
+
+                // motos del usuario que no son kawasaki
+                $motos->diff($kawas);
+
+                // motos kawasaki que no son del usuario
+                $kawas->diff($motos);
+
+
+
+        intersects()
+            -> intersección de conjuntos
+
+                // motos del usuari 5
+                $motos = User::find(5)->bikes;
+
+                // motos kawasaki
+                $kawas = Bike::where('marca', 'kawasaki')->get();
+
+                // motos del usuario que no son kawasaki
+                $motos->intersect($kawas);
+
+                // o también
+                // motos kawasaki que no son del usuario
+                $kawas->intersect($motos);
+
+
+        merge()
+            -> unión de conjuntos.
+
+                // motos del usuari 5
+                $motos = User::find(5)->bikes;
+
+                // motos kawasaki
+                $kawas = Bike::where('marca', 'kawasaki')->get();
+
+                // Las motos del usuario 5 y las que son kawasaki
+                // no se incluyen repeticiones
+                $todas = $motos->merge($kawas);
+
+
+
+
+

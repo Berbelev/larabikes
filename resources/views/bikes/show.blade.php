@@ -14,6 +14,10 @@
             <td>{{$bike->modelo}}</td>
         </tr>
         <tr>
+            <th scope="row">Proietario </th>
+            <td>{{$bike->user? $bike->user->name : 'Sin propietario'}}</td>
+        </tr>
+        <tr>
             <th scope="row">Kms</th>
             <td>{{$bike->kms}}</td>
         </tr>

@@ -1,0 +1,189 @@
+LAR 30 ELOQUENT ==============================================================================
+==============================================================================================
+
+    SELECT ===================================================================================
+    Métodos all(), find()... la R del CRUD
+
+        MÉTODO all() =========================================================================
+            all()
+                -> recupera todos los registros.
+                    $tiendas = Shop:all();
+                -> Devuelve un objeto de tipo Illuminate/Database/Eloquent/Colection
+                    -> Hereda de la clase Collection.
+                    -> (También todos los métodos que devuelven múltiples resultados)
+
+                         $shops = Shop::all();
+
+
+        COLECCIONES ==========================================================================
+            -> Las colecciones Eloquient son un tipo de Collection.
+            -> Dispone de métodos útiles para trabajar con ellas y los modelos que contienen.
+            -> Son iterables.
+
+                $shops = Shop::all();
+
+                // como las Eloquent Collections son iterables,
+                // podemos usar un foreach()
+
+                foreach($shops as $shop){
+                    echo "$shop->nombre, en $shop->poblacion. \n";
+                }
+
+
+        MÉTODO get() =========================================================================
+        Cada modelo Eloquent actúa como un query builder.
+            get()
+                -> recupera los resultados después de añadir restricciones en la consulta.
+
+                    // tiendas de sabadell ordenadas por ID dec
+                    Shop::where('poblacion', 'Sabadell')
+                        ->orderBy('id', 'DESC')
+                        ->get();
+
+        MÉTODO find() ========================================================================
+
+            find()
+                -> recupera los registros individualmente, por su clave primaria.
+                -> retorna una instancia del modelo.
+
+                    $shop = Shop::find(2);
+
+                -> tambien puede recuperar una Eloquent colection si le pasamos un array con los ids
+
+                    $shops = Shop::find([1,2]);
+
+
+        MÉTODO first() =======================================================================
+
+            first()
+                -> recupera el primer elemento que cumpla una determinada condición.
+
+                    $shop= Shop::where('poblacion', 'Sabadell')->first();
+
+
+            NOT FOUND (404) ==================================================================
+                find() y first()
+                    -> Retornan NULL cuando no encuentran lo que buscan en la BDD.
+                        -> Podemos lanzar una excepción que derive en un error 404:
+
+                                $shop = Shop::find(100);
+
+                                if(!$shop)
+                                    abort(404, 'Tienda no encontrada');
+
+
+                        findOrFail() y firstOrFail()
+                            -> Métodos que recuperan un resultado...
+                            -> pero si no lo encuentran se lanza una excepción de tipo:
+                                -> Illuminate\Database\Eloquent\ModelNotFoundException
+
+                                    $shop = Shop::findOrFail(11);
+
+                                    $shop = Shop::where('poblacion', 'Olot')->firstOrFail();
+
+
+                            ->  Cuando usamos la inyección de dependencias para inyectar en un método
+                                de controlador  un modelo a partir de su id, se realiza un findOrFail().
+
+
+        CONSULTAS DE TOTALES =================================================================
+            count(), sum(), max()... disponibles mediante el query builder.
+                -> Retornan un valor númerico, no una instancia.
+
+                    // Tiendas de Sabadell
+                    Shop::where('poblacion', 'Sabadell')->count();
+
+                    // Precio de todas las motos
+                    Bike::all()->sum('precio');
+
+                    // promedio de precio, máximo y mínimo
+                    Bike::all()->avg('precio');
+                    Bike::all()->min('precio');
+                    Bike::all()->max('precio');
+
+
+        COMPARANDO MODELOS ===================================================================
+
+            is()
+                -> Verifica si dos modelos tienen la misma clave primaria, tabla y coneción con BDD
+
+                    // comparando modelos
+                    $primera = Shop::find(1);
+                    $primeraSabadell = Shop::where('poblacion', 'Sabadell')->first();
+
+                    $primera->is($primeraSabadell); // true
+
+                    $segunda = Shop::find(2);
+                    $segundaTerrassa = Shop::where('poblacion', 'Terrassa')->first();
+
+                    $segunda->is($segundaTerrassa); // true
+
+                    $segunda->is($primeraSabadell); // false
+
+
+        REFRESCANDO MODELOS ==================================================================
+            fresh()
+                -> Recupera de nuevo los datos desde la BDD
+                -> Retorna los datos recuperados pero no modifica el modelo actual
+                    -> (no se pierden los cambios).
+
+                        $shop = Shop::find(2);
+                        [!] Aliasing 'Shop' to 'App\Models\Shop' for this Tinker session.
+                        => App\Models\Shop {#3971
+                            id: 2,
+                            nombre: "ShopLB",
+                            poblacion: "Terrassa",
+                            telefono: "9322223333",
+                            created_at: "2022-10-31 20:36:21",
+                            updated_at: "2022-10-31 20:36:21",
+                        }
+
+                        $shop->nombre = "Motos Paco";    // cambios
+                        => "Motos Paco"
+
+                        $shop->fresh();
+                        => App\Models\Shop {#4590
+                            id: 2,
+                            nombre: "ShopLB",
+                            poblacion: "Terrassa",
+                            telefono: "9322223333",
+                            created_at: "2022-10-31 20:36:21",
+                            updated_at: "2022-10-31 20:36:21",
+                        }
+
+                        echo $shop->nombre;
+                        Motos Paco⏎                      // no se pireden los cambios realizados
+
+            refresh()
+                -> Recupera de nuevo los datos desde la BDD
+                -> Retorna los datos recuperados modificando el modelo actual
+                    -> (se pierden los cambios).
+
+                        $shop = Shop::find(2);
+                        [!] Aliasing 'Shop' to 'App\Models\Shop' for this Tinker session.
+                        => App\Models\Shop {#3971
+                            id: 2,
+                            nombre: "ShopLB",
+                            poblacion: "Terrassa",
+                            telefono: "9322223333",
+                            created_at: "2022-10-31 20:36:21",
+                            updated_at: "2022-10-31 20:36:21",
+                        }
+
+                        $shop->nombre = "Motos Berbel";    // cambios
+                        => "Motos Paco"
+
+                        $shop->refresh();
+                        => App\Models\Shop {#4590
+                            id: 2,
+                            nombre: "ShopLB",
+                            poblacion: "Terrassa",
+                            telefono: "9322223333",
+                            created_at: "2022-10-31 20:36:21",
+                            updated_at: "2022-10-31 20:36:21",
+                        }
+
+                        echo $shop->nombre;
+                        ShopLB⏎                      // se pireden los cambios realizados
+
+

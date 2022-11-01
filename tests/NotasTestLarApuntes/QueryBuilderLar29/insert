@@ -1,0 +1,21 @@
+LAR 29 QUIERY BUILDER ========================================================================
+==============================================================================================
+
+    INSERT ===================================================================================
+        insert()
+            -> Realiza la inserción
+            -> Recibe uno o mas arrays asociativos (depende si inserción sencilla o múltiple)
+
+        insertOrIgnore()
+            -> Realiza la iserción pero ignorando los registros duplicados al realizar la inserción.
+
+        insertGetId()
+            -> Realiza la insercción
+            -> Y retorna el id autonumérico asignado al registro.
+
+                // CONSULTAS DE INSERCCIÓN
+                DB::table('bikes')->insert([
+                    ['marca'=>'KTM', 'modelo'=>'TT', 'precio'=>4000, 'kms'=>15000],
+                    ['marca'=>'Ducati', 'modelo'=>'GP500', 'precio'=>6000, 'kms'=>55000]
+                ]);
+

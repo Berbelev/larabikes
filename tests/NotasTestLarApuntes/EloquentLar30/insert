@@ -1,0 +1,64 @@
+LAR 30 ELOQUENT ==============================================================================
+==============================================================================================
+
+    INSERT ===================================================================================
+    Métodos save() y create(), la C del CRUD
+
+        save()
+                // crea nuevo objeto del modelo
+                $shop = new Shop();
+
+                //  indicar los valores
+                $shop->nombre= 'Concesionario Can Deu';
+                $shop->poblacion= 'Sabadell';
+                $shop->telefono='9300001111'
+
+                // guardar con save() para que sea insertado en la BDD
+                $shop->save();
+
+        create()
+            -> método estático del modelo.
+            -> recibe un array asociativo.
+            -> Realiza asignaciones masivas (no permitido por defecto)
+
+                $fillable
+                    -> propiedad a añadir para permitir las asignacione masivas.
+                    -> se indican los campos que deseamos permitir...
+
+
+
+                        // Ejemplo $fillable:
+                        -------------------------------------------------------------
+                        class Shop extends Model{
+
+                            // campos donde se permiten asignaciones masivas
+                            protected $fillable =['nombre', 'poblacion', 'telefono'];
+
+                        }
+                        --------------------------------------------------------------
+
+
+
+                            // Ejemplo create():
+                            ----------------------------------------------------------
+                            Shop::create([
+                                'nombre'=>'ShopLB',
+                                'poblacion'=>'Terrassa',
+                                'telefono'=>'9322223333'
+                            ]);
+                            => App\Models\Shop {#3637
+                                nombre: "ShopLB",
+                                poblacion: "Terrassa",
+                                telefono: "9322223333",
+                                updated_at: "2022-10-31 20:36:21",
+                                created_at: "2022-10-31 20:36:21",
+                                id: 2,
+                              }
+                            -------------------------------------------------------------
+
+
+                $guarded
+                    -> este atributo actua de forma contraria a $fillable
+                    -> actua como lista negra
+                        -> se indican los campos que no se deben permitir.
+

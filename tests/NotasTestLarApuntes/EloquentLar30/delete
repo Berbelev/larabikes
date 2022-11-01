@@ -1,0 +1,46 @@
+LAR 30 ELOQUENT ==============================================================================
+==============================================================================================
+
+    DELETE ===================================================================================
+    Métodos delete() y destroy()... la D del CRUD
+
+        EL MÉTODO delete() ===================================================================
+
+            delete()
+                -> elimina un modelo
+                    -> 1º  podemos recuperar el modelo.
+                        -> 2º usar método delete() sobre si mismo.
+
+                            Shop::find(1)->delete();
+
+                    -> también podemos eliminar un conjunto de modelos
+                        -> que cumplan una determinada condición:
+
+                            Shop::where('poblacion', 'LIKE', 'S%')->delete();
+
+
+                        -> No se disparará ningún evento cuando eliminemos múltiples filas de golpe.
+                            -> (Ni deleting ni deleted)
+
+
+        EL MÉTODO destroy() ==================================================================
+
+            destroy()
+                -> Método estático
+                -> Elimina el modelo o modelos pasandole la clave primaria.
+                -> Pasar un array para eliminar múltiples registros.
+
+                    Shop::destroy([9,8]);
+
+
+        SOFT DELETES =========================================================================
+
+            Mecanismo de "borrado blando" que borra registros sin eliminarlos de la base de datos.
+                -> Marca la información como 'borrada' pero no la suprime.
+                -> Permite, posteriormente:
+                    -> Eliminarla definitivamente
+                    -> O Restaurarla
+                        -> Se utiliza un campo deleted_at
+                            -> contendrá NULL si el registro no ha sido borrado.
+                            -> o contendrá la fecha si ha sido borrado definitivamente.
+

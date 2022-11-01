@@ -1,0 +1,68 @@
+LAR 29 QUIERY BUILDER ========================================================================
+==============================================================================================
+Realizando transacciones
+
+    TRANSACCIONES ============================================================================
+        transaction()
+            -> Método de la fachada DB.
+            -> Recibe una clausuara con las operaciones a realizar en la transacción.
+            -> rollback (automático) si sucede una excepción con una operación de la transacción.
+            -> commit (se ejecuta) si todas la operaciones se realizan correctamente.
+
+                // transacción, o se hace todo o no se hace nada.
+                DB::transaction(function(){
+                    DB::table('bikes')->increment('kms');     // incrementa en 1 los kms
+
+                    DB::table('bikes')->decrement('kms');     // decrementa en 1 los kms
+                });
+
+            -> puede recibir opcionalmente un segundo argumento, que define el número de veces
+               en las que se debe reintentar una transacción cuando sucede un bloqueo.
+                ->una vez que se han usado todos los intentos, se lanza la excepción.
+
+                    // transacción , o se hace todo o no se hace nada (3 reintentos)
+                    DB::transaction(function(){
+                        DB::table('bikes')->increment('kms');     // incrementa en 1 los kms
+
+                        DB::table('bikes')->decrement('kms');     // decrementa en 1 los kms
+                    }, 3);
+
+
+
+    GESTIÓN MANUAL DE TRANSACCIONES ==========================================================
+
+        DB::beginTransaction()
+            -> método que gestiona manualmente la transacción.
+            -> teniendo control sobre los rollbacks y los commits.
+
+                DB::rollback()
+                    -> método para deshacer los cambios.
+
+                DB::commit()
+                    -> método para aplicar los cambios.
+
+                        // Ejemplo:
+
+                        DB::beginTransaction();         // Inicia una transacción
+
+                        DB::table('bikes')->where('id', 17)->update(['kms' => 0]);   // actualiza
+
+                        DB::table('bikes')->where('id', 17)->value('kms');           // comprueba
+
+                        DB::rollback();         // tira atrá los cambios
+
+                        DB::table('bikes')->where('id', 17)->value('kms');           // comprueba
+
+
+                        DB::beginTransaction();         // Inicia una transacción
+                        DB::table('bikes')->where('id', 17)->update(['kms' => 0]);   // actualiza
+
+                        DB::table('bikes')->where('id', 17)->value('kms');           // comprueba
+
+                        DB::commit();         // aplica los cambios
+
+                        DB::table('bikes')->where('id', 17)->value('kms');           // comprueba
+
+
+
+

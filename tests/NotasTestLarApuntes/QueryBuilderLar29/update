@@ -1,0 +1,27 @@
+LAR 29 QUIERY BUILDER ========================================================================
+==============================================================================================
+
+    UPDATE ===================================================================================
+        update()
+            -> recibe un array asociativo con los datos a actualizar
+            ->where()
+                -> se incluye para no actualizar todos los registro de golpe
+
+                    DB::table('bikes')
+                        -> where('id', 810)
+                        -> update(['matriculada'=>1, 'matricula'=>'5555ppt']);
+
+        increment()
+            -> incrementa el valor de un campo númerico.
+
+                DB::table('bikes')
+                -> where('id', 809)
+                -> increment('kms', 100000);
+
+        decrement()
+            -> decrementa el valor de un campo númerico
+
+        updateOrInsert()
+            -> intentará actualizar el registro
+                -> pero si no lo encuentra, creará un registro nuevo.
+

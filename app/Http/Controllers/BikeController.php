@@ -338,8 +338,7 @@ class BikeController extends Controller{
      * @return \Illuminate\Http\Response
      */
     public function destroy(Request $request, Bike $bike) {
-        // Realizamos la autorización mediante Policie en BikeDeleteRequest
-        // FIXME:3_NO FUNCIONA POLICIE EN BIKEDELETEDREQUEST, CONTROLADOR METODO DELETE
+
         if($request->user()->cant('delete', $bike))
             abort(401, 'No puedes borrar una moto que no es tuya');
 

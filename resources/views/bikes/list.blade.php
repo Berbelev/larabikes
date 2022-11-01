@@ -56,6 +56,7 @@
                 <th>Modelo</th>
                 <th>Matricula</th>
                 <th>Color</th>
+                <th>Propietario</th>
                 <th>Operaciones</th>
             </tr>
         @endif
@@ -63,7 +64,7 @@
             <tr>
                 <td>{{$bike->id}}</td>
                 <td class="text-center" style="max-width: 80px" >
-                    <!--TODO:IMAGEN mejorar estilo para que sean aprox la misma altura para cada fila-->
+                    <!--TODO:LAR.IMAGEN mejorar estilo para que sean aprox la misma altura para cada fila-->
                     <img class="rounded" style="max-width: 80%"
                          alt="Imagen de {{$bike->marca}} {{$bike->modelo}}"
                          title="Imagen de {{$bike->marca}} {{$bike->modelo}}"
@@ -74,9 +75,10 @@
                          }}">
                 </td>
                 <td>{{$bike->marca}}</td>
-                <td>{{$bike->modelo}}</td>
+                <td style="text-align: center">{{$bike->modelo}}</td>
                 <td>{{$bike->matricula}}</td>
                 <td style="background-color:{{$bike->color}}">{{$bike->color}}</td>
+                <td style="text-align:center ">{{$bike->user? $bike->user->name : 'Sin propietario'}}</td>
                 <td class="text-center">
                     <a href="{{route('bikes.show',$bike->id)}}">
                         <img height="20" width="20" alt="Ver detalles" title="Ver detalles"

@@ -1,0 +1,15 @@
+LAR 29 QUIERY BUILDER ========================================================================
+==============================================================================================
+
+    DELETE ===================================================================================
+        delete()
+            -> para borrar registros
+                ->Where()
+                    -> para no eliminar todos los registro de golpe (y lors relaccionados en cascada)
+
+                        // borra las dos motos que acabamos de crear y editar.
+                        DB::table('bikes)
+                            ->where('id', '=', 810)
+                            ->orWhere('id', '=', 809)
+                            ->delete();
+

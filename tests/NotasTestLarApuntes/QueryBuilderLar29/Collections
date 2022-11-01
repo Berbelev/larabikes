@@ -1,0 +1,164 @@
+LAR 29 QUIERY BUILDER ========================================================================
+==============================================================================================
+Trabajando con colecciones
+
+    COLECCIONES ==============================================================================
+    -> Los métodos que seleccionan registros retornan colecciones (ej get())
+    -> Son objetos de tipo illuminate\Support\Collection.
+
+        collect()
+            -> helper para crear una colección manualmente.
+            -> Recibe un array con los elementos a aññadir a la nueva colección (indexado o asociativo)
+
+                $coleccion= collect(['patata', 'cebolla']);
+                => Illuminate\Support\Collection {#3643
+                    all: [
+                      "patata",
+                      "cebolla",
+                    ],
+                  }
+
+        make()
+            -> optativo a collect()
+            -> método estático de \Illuminate\Support\Collection
+
+                $coleccion = \Illuminate\Support\Collection::make(['queso', 'lechuga']);
+                => Illuminate\Support\Collection {#3645
+                    all: [
+                      "queso",
+                      "lechuga",
+                    ],
+                  }
+
+
+
+    -> Las colecciones pueden ser indexadas o asociativas.
+    -> Normalmente son asociativas y contienen pares de clave / valor
+
+        $c1= collect(['nombre'=>'Pepe', 'cargo'=>'supervisor']);
+        => Illuminate\Support\Collection {#3647
+            all: [
+            "nombre" => "Pepe",
+            "cargo" => "supervisor",
+            ],
+        }
+
+
+    -> Cuando tenemos una colección, podemos usar métodos como:
+
+        all()
+            -> Retorna todos los elementos en un array.
+
+                >>> $c1->all();
+                => [
+                    "nombre" => "Pepe",
+                    "cargo" => "supervisor",
+
+        except()
+            -> Retorna todos los elementos excepto los indicados.
+
+                >>> $c1->except('cargo');
+                => Illuminate\Support\Collection {#3637
+                    all: [
+                    "nombre" => "Pepe",
+                    ],
+                }
+
+        only()
+            -> Retorna solamente los elementos indicados.
+
+                >>> $c1->only('cargo');
+                => Illuminate\Support\Collection {#3638
+                    all: [
+                    "cargo" => "supervisor",
+                    ],
+                }
+
+    -> En query builder...
+        -> Los métodos del query builder no retornan colecciones con pares de clave y valor,
+        -> Retornan collecciones donde en cada posición tenenmos un objeto de tipo stdClass.
+        -> Se usan índicies y no claves para los métodos all(), only(), except()
+
+                // motos kawasaki
+                $kawas = DB::table('bikes')->where('marca','=','kawasaki')->get();
+
+                dump($kawas->all());                      // todas
+                dump($kawas->only(0));                    // la primera
+                dump($kawas->only([0,1]));                // la primera y la segunada
+                dump($kawas->except(0));                  // todas excepto la primera
+                dump($kawas->except([0,1]));              // todas excepto la primera y la segunda
+
+
+    get()
+        -> retorna el elemento en la posicion indicada por parámetro.
+
+            // motos de mas de 10.000 euros
+            $motos = DB::table('bikes')->where('precio', '>', '10000')->get();
+
+            dump($motos->get(0));    // primera moto de la colección
+            dump($motos->get(1));    // segunda moto de la colección
+            dump($motos->get(2));    // tercera moto de la colección
+
+
+    forget()
+        -> elimina un elemento de una colección.
+
+            // tomamos dos motos.
+            $moto1= DB::table('bikes')->where('id', '=', 17)->get();
+            $moto2= DB::table('bikes')->where('id', '=', 10)->get();
+
+            // las metemos en una colección
+            $motos = collect([$moto1, $moto2]);
+
+            // olvidamos la segunda moto
+            $motos->forget(1);
+
+            // la colección solamente contiene la primera
+            dump($motos);
+
+
+    contact()
+        -> concatena una colección al final de la otra colección.
+
+            // concatenando dos colecciones.
+            $c1= DB::table('bikes')->where('marca', '=', 'CAPSULE')->get();
+            $c2= DB::table('bikes')->where('marca', '=', 'kawasaki')->get();
+
+            // resultado tendrá las motas CAPSULE y kawasaki
+            $resultado = $c1->concat($c2);
+
+    count()
+        -> cuenta los elementos que hay en la colección.
+
+            $resultado->count();
+
+
+    each()
+        -> itera por los elementos de una colección aplicando una función.
+
+            // motos con usuario
+            $motos = DB::table('bikes')->whereNotNull('user_id')->get();
+
+            // para cada moto de la lista...
+            $motos->each(function($item, $key){
+
+                //muestra el usuario al que pertenece
+                $user = DB::table('users')->where('id', $item->user_id)->get()->get(0);
+                echo "La moto $item->marca $item->modelo pertenece a $user->name.\n";
+            });
+
+
+    filter()
+        -> Retorna los elementos de una colección que superan el filtro especificado.
+
+            // Recupera todas las motos
+            $motos= DB::table('bikes')->get();
+
+            // Recupera las que tengan mas de 45.000 kms de la colección.
+            $rodadas = $motos->filter(function ($moto){
+                return $moto->kms > 45000;
+            });
+
+            // comprobación
+            $motos->count();
+            $rodadas->count();

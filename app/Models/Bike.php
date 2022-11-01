@@ -11,5 +11,10 @@ class Bike extends Model{
     // Campos a los que se permite hacer asignación masiva desde la request a la BDD
     protected $fillable =['marca','modelo', 'kms', 'precio','imagen',
                          'user_id','matriculada' ,'matricula', 'color'];
+
+    // retorna el usuario propietario de la moto
+    public function user(){
+        return $this->belongsTo('\App\Models\User');
+    }
 }
 

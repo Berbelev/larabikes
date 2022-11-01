@@ -1,0 +1,46 @@
+LAR 30 ELOQUENT ==============================================================================
+==============================================================================================
+
+    UPDATE ===================================================================================
+    Métodos save() y update()... la U del CRUD
+
+        EL MÉTODO save() =====================================================================
+            save()
+                -> guarda y/o actualiza un modelo en la BDD.
+                    -> 1º hay que recuperar el modelo
+                        -> 2º cambiar sus atributos
+                            -> 3º llamar al método save()
+
+                                $tienda = Shop::find(1);                        // recupera la tienda 1
+                                $tienda->nombre = "Motos Castellarnau";         // cambia el nombre
+                                $tienda->save();                                // actualiza
+
+                                $tienda = Shop::find(1);                        // comprueba
+
+
+        EL MÉTODO update() ===================================================================
+            update()
+                -> actualiza un modelo en la BDD.
+                -> permite realizar actualizaciones masivas de los campos a partir de un array.
+                    -> 1º hay que recuperar el modelo
+                        -> 2º cambiar sus atributos
+                            -> 3º llamar al método update()
+
+                                $tienda = Shop::find(1);                        // recupera la tienda 1
+
+                                $tienda->update([
+                                    'nombre'=> 'Motos Can Rull',
+                                    'telefono'=> '937456123'
+                                ]);                                             // actualiza
+
+                                $tienda = Shop::find(1);                        // comprueba
+
+
+                -> las actualizaciones se pueden realizar en todo un conjunto de modelos que coincidan con un criterio específoco.
+
+                    ->Ejemplo
+
+                    // Borrar el teléfono de todas las tiendas de sabadell
+                    Shop::where('poblacion', 'Sabadell')->update(['telefono'=>NULL]);
+
+                    -> Cuando se hacen actualizaciones masivas, los eventos saved y updated no serán disparados.

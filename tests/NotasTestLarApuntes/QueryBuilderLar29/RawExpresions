@@ -1,0 +1,60 @@
+LAR 29 QUIERY BUILDER ========================================================================
+==============================================================================================
+Añadiendo código SQL "crudo" a las consultas
+
+    RAW Expresions ===========================================================================
+        raw()
+            ->añade código SQL directamente en la consulta.
+
+                DB::table('bikes')
+                    ->select(DB::raw('marca, count(*) AS n_bikes'))    // SQL en crudo'
+                    ->groupBy('marca')
+                    ->get();
+
+        selectRaw()
+            -> se usa en lugrar de select(DB::rav()).
+
+                DB::table('bikes')
+                    ->selectRaw('marca, modelo, precio, precio * ? AS PVP', [1.21])  //'
+                    ->get();
+
+        orderByRaw()
+            -> establece el valor de la cláusula ORDER BY
+
+                // ordenadaspor un cálculo específico
+                DB::table('bikes')
+                    ->select('marca', 'modelo', 'precio', 'kms')
+                    ->orderByRaw('precio * ((kms+100)/1000) ASC')                      //'
+                    ->get();
+
+        whereRaw() y orWhereRaw()
+            -> consultas de SELECT con condiciones en el WHERE.
+
+                // ordenadaspor un cálculo específico
+                DB::table('bikes')
+                    ->select('marca', 'modelo', 'precio', 'kms')
+                    ->whereRaw('Kms < ?', [100])                                        //'
+                    ->orWhereRaw('Kms > ?', [100000])                                   //'
+                    ->get();
+
+
+        havingRaw() y orHavingRaw()
+            -> asignan el valor de la cláusla HAVING
+
+                // promedio del precio y cuenta de motos
+                // agrupado por marca
+                // para marcas con un precio promedio superior a 10.000 o inferior a 1.000
+                DB::table('bikes')
+                    ->select(DB::raw('marca, AVG(precio) AS promedio, COUNT(*) AS motos')) //'
+                    ->groupBy('marca')
+                    ->havingRaw('AVG(precio) > ?', [10000])                                //'
+                    ->orHavingRaw('AVG(precio) < ?', [1000])                               //'
+                    ->get();
+
+
+
+
+
+
+
+

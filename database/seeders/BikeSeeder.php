@@ -15,6 +15,6 @@ class BikeSeeder extends Seeder
     public function run()
     {
         //crea 200 motos
-        Bike::factory(200)->create();
+        Bike::factory(50)->create();
     }
 }

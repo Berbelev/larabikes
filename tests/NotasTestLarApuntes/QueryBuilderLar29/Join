@@ -1,0 +1,64 @@
+LAR 29 QUIERY BUILDER ========================================================================
+==============================================================================================
+Consultas con varias tablas
+
+    CONSULTA CON VARIAS TABLAS ===============================================================
+        join()
+            -> realizar consultas con varias tablas mediante query builder
+            -> https://laravel.com/docs/9.x/queries
+
+                -> Operaciones básicas:
+
+                    _Inner join
+                        -> información realaccionada en ambas tablas.
+
+                    _Outer join
+                        -> (left y right): toda la información de una tabla y la relaccionada en la otra.
+
+                    _Producto cartesiano
+                        -> multiplicación cartesiana de ambas tablas.
+
+
+    INNER JOIN ===============================================================================
+        join()
+            -> Para consultas de inner join
+            -> se le pasa a join el nombre de la tabla con la que quiero establecer relacción.
+
+                // nombre del usuario junto matrícula de sus motos
+                // solamente aparecen usuarios que tengan motos
+                DB::table('users')
+                    ->join('bikes', 'users.id', '=', 'bikes.user_id')
+                    ->select('users.name', 'bikes.matricula')
+                    ->get();
+
+                    -> Solamente aparecen usuarios con moto y motos con usuario (inner join)
+
+
+    OUTER JOIN ===============================================================================
+        rightJoin() o leftJoin()
+            -> realizar outer join
+
+                leftJoin()
+
+                    // recuperar nombre de los usuarios junto con las matrículas de sus motos
+                    // aparecen todos los usuarios (left porque queremos todos los usuarios)
+                    DB::table('users')
+                        ->leftJoin('bikes', 'users.id', '=', 'bikes.users_id')
+                        ->select('users.name', 'bikes.matricula)
+                        ->get();
+
+                        ->Aparecen todos los usuarios aunque no tengan moto
+
+
+
+                rightJoin()
+
+
+                    // aparecen todas las motos (right porque queremos todas las motos)
+                    DB::table('users')
+                        ->rightJoin('bikes', 'users.id', '=', 'bikes.users_id')
+                        ->select('users.name', 'bikes.matricula)
+                        ->get();
+
+                        ->Aparecen todas las motos aunque no tengan usuario
+

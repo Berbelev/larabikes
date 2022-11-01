@@ -1,0 +1,7 @@
+LAR 31 ELOQUENT
+    RELACCION N A N (USUARIOS - ROLES)
+        POLICIES
+            User::find(3)->can('update', Bike::find(50));
+
+            User::find(3)->can('update', Bike::find(50));
+

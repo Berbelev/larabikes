@@ -1,0 +1,27 @@
+LAR 30 ELOQUENT ==============================================================================
+==============================================================================================
+
+    OTROS MÉTODOS ============================================================================
+
+    firstOrCreate()
+        -> Intenta encontar un registro en la BDD con los pares de columna y valor indicados por parámetro.
+        -> Si el modelo no está, un nuevo registro será insertado.
+
+            $moto = Bike::firstOrCreate(['marca' => 'Honda', 'modelo'=> 'XXY']);
+
+            $moto = Bike::firstOrCreate(['marca' => 'Honda', 'modelo'=> 'XXY']);
+
+    firstOrNew()
+        -> Intenta encontar un registro en la BDD con los pares de columna y valor indicados por parámetro.
+        -> Si no encuentra el registro, crea un nuevo modelo no Persistente
+            -> No lo crea en la BDD.
+        -> Para guardarlo hay que llamar al método save().
+
+    updateOrCreate()
+        -> Actualiza un modelo o lo crea si no existe
+        -> Si el modelo no está, un nuevo registro será insertado.
+        -> Hace presistentes los datos guardandolos en BDD.
+
+            $moto = Bike::updateOrCreate(['marca' => 'Honda', 'modelo'=> 'XXY'], ['precio'=>1000]);
+
+            $moto = Bike::updateOrCreate(['marca' => 'Harley Davidson', 'modelo'=> 'Thunder'], ['precio'=>5000]);

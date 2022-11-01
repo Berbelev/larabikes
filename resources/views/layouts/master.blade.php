@@ -96,16 +96,16 @@
 
 
         <!--PARTE SUPERIOR-->
+
         <!--MENSAJES condicionados al entorno-->
         @env(['local', 'test'])
             <x-local :mode="App::environment()" />
         @endenv
-
         @env(['staging', 'production'])
             <x-production/>
         @endenv
 
-
+        <!--NAVEGADOR sección-->
         @section('navegacion')
         @php($pagina = Route::currentRouteName())
 

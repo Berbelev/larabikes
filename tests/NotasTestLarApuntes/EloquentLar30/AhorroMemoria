@@ -1,0 +1,71 @@
+LAR 30 ELOQUENT 1 ============================================================================
+==============================================================================================
+El método chunk() y los cursores
+
+    DESPEDAZANDO =============================================================================
+
+        chunk()
+            -> recupera los modelos a "pedazos" (en grupos menores) y ahorra memoria.
+            -> Recibe como parámetro el número de registros por pedazo y la función que procesa cada pedazo.
+            -> Se ejecutan multiples consultas con la BDD, tantas como grupos haya (una por pedazo).
+            -> Las operaciones a realizar sobre los grupos de resultados se indican a modo de clausura.
+            -> Se pueden detener el procesamiento de los conjuntos de resultados..
+                -> si en la clausuar retornamos false en algun momento.
+
+                    // PRUEBA
+                    Route::get('/chunk', function(){
+
+                            \App\Shop::chunk(3, function($pedazo){
+
+                                foreach($pedazo as $tienda){
+                                    echo $tienda->nombre."<br>";
+                                }
+
+                                echo "----------------------------------\n";
+
+                            });
+
+                        });
+
+            -> Hay que tener cuidado si actualizamos o borramos registros dentro del grupo.
+                -> (si indicamos operaciones de este tipo en la clausura)
+
+                -> Los cambios pueden provocar que los grupos recuperen resultados incorrectos.
+                    -> Debido a los registros que "cambian de grupo"
+                        ->Puede aparecer varias veces el mismo.
+                        ->Puede no aparecer un registro concreto.
+
+    CURSORES =================================================================================
+
+        cursor()
+            -> Otra manera de ahorrar memoria.
+            -> Permite iterar sobre los registros de la BDD solamente con una consulta.
+            -> Al no generar la colección de modelos de golpe , reduce el uso de la memoria.
+            -> Se basan en los generator de PHP
+                -> https://www.php.net/manual/en/language.generators.overview.php
+
+                    // PRUEBA
+                    Route::get('/chunk', function(){
+
+                        foreach(\App\Shop::where('poblacion','Barcelona')->cursor() as $tienda){
+                            echo $tienda->nombre."<br>";
+                        }
+
+                    });
+
+
+
+    CHUNK vs. CURSOR =========================================================================
+
+        chunk()-> pagina la consulta, de forma que usa menos memoria.
+
+                    -> Usa menos memoria.
+                    -> Es mas lento.
+                    -> Se realizan más consultas a la BDD.
+
+        cursor()
+            -> usan PHP generators para recuperar los elementos del resultado de la consulta uno a uno.
+
+                    -> Consume más memoria
+                    -> Es mas rápido.
+

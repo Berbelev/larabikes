@@ -53,7 +53,9 @@ class BikePolicy
      */
     public function update(User $user, Bike $bike){
         //Solo puede actualizar las motos: su propietario o el administrador
-        return $user->id == $bike->user_id || $user->email == 'admin@larabikes.com';
+        // true si el usuario es el propietario o tiene uno de los roles
+        return $user->isOwner($bike) ||
+               $user->hasRole(['editor', 'administrador', 'todopoderoso']);
     }
 
     /**
@@ -65,7 +67,9 @@ class BikePolicy
      */
     public function delete(User $user, Bike $bike){
         //Solo puede borrar las motos: su propietario o el administrador
-        return $user->id == $bike->user_id || $user->email == 'admin@larabikes.com';
+        // true si el usuario es el propietario o tiene uno de los roles
+        return $user->isOwner($bike) ||
+               $user->hasRole(['editor', 'administrador', 'todopoderoso']);
         //  FIXME:3_NO FUNCIONA POLICIE EN BIKEDELETEDREQUEST, CONTROLADOR METODO DELETE
 
     }
