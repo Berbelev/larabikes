@@ -3,6 +3,7 @@
     <head>
         <meta charset="UTF-8">
         <style>
+
             @php
                 include 'css/bootstrap.min.css';
             @endphp
@@ -13,7 +14,7 @@
     <body class="container p-3">
         <header class="container row bg-light p-4 my-4">
             <figure class="img-fluid col-2">
-                <img src="{{asset('images/Logos/Logo.png')}}" alt="logo">
+                <img src="{{asset('imagenes/template/logo.png')}}" alt="logo">
             </figure>
         </header>
         <main>

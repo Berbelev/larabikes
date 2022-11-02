@@ -12,6 +12,8 @@ use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Gate;
+use App\Events\FirstBikeCreated;
+//use Illuminate\Foundation\Events\Dispatchable;
 
 
 class BikeController extends Controller{
@@ -151,8 +153,13 @@ class BikeController extends Controller{
         // _4_ Creción y guardado de la nueva moto
         $bike = Bike::create($datos);
 
+        // _5_ Despachar evento
+        // Para la primera moto creada por un usuario.
+        if($request->user()->bikes->count() == 1)
+            FirstBikeCreated::dispatch($bike, $request->user());
 
-        // _5_ redireccion a los detalles de la moto creada
+
+        // _6_ redireccion a los detalles de la moto creada
         return redirect()
             ->route('bikes.show', $bike->id)
             ->with('success', "Moto $bike->marca $bike->modelo añadida con éxito.")
